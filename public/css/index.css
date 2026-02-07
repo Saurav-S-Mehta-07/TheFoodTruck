@@ -53,6 +53,15 @@
 .navigator a:hover{
     color: #F9CE10;
 }
+.header-order-btn{
+    background-color: #F9CE10;
+    width: 40%;
+    height: 50%;
+    border: none;
+    border-radius: 12px;
+    font-weight:bold;
+    font-size: 1rem;
+}
 
 
 /* landing page */
@@ -88,15 +97,7 @@
     color: gray;
 }
 
-.header-order-btn{
-    background-color: #F9CE10;
-    width: 40%;
-    height: 50%;
-    border: none;
-    border-radius: 12px;
-    font-weight:bold;
-    font-size: 1rem;
-}
+
 
 .order-btn{
     background-color: #F9CE10;

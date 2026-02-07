@@ -20,6 +20,10 @@ app.get("/blogs",(req,res)=>{
     res.render("blogs");
 })
 
+app.get("/about",(req,res)=>{
+    res.render("about");
+})
+
 app.listen(PORT, ()=>{
     console.log(`Listening to PORT : ${PORT}`);
 })
