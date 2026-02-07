@@ -24,6 +24,11 @@
     justify-content: center;
     align-items: center;
 }
+.logo img{
+    cursor: pointer;
+    width: 100%;
+    height: 100%;
+}
 
 .header-icons{
     display: flex;
@@ -33,7 +38,7 @@
 }
 
 .navigator{
-    width: 40%;
+    width: 30%;
     display: flex;
     justify-content: space-around;
     align-items: center;
@@ -43,6 +48,10 @@
     text-decoration: none;
     color: rgb(74, 74, 74);
     font-size: 1.2rem;
+}
+
+.navigator a:hover{
+    color: #F9CE10;
 }
 
 
@@ -220,7 +229,18 @@
 
 .promises-card h2{
     font-size: 1rem;
+    padding: 0 5%;
 }
+
+.promises-card i{
+    border: 3px solid #F9CE10;
+    border-radius: 50%;
+    padding: 5px 3px;
+    display: inline;
+    color: #F9CE10;
+    font-size: 1.5rem;
+}
+
 .promises-card p{
     color: rgb(138, 137, 137);
 }
@@ -325,6 +345,7 @@
     height: 40px;
     width: 200px;
     margin-right: 8px;
+    cursor: pointer;
 }
 
 .installation-box-explaination{
@@ -335,13 +356,16 @@
 
 .installation-box-explaination p{
     font-size: 1rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 
 /* footer */
 .footer{
     background-color: black;
-    color: white;
+    color: rgb(173, 173, 173);
     height: 70vh;
     display: flex;
     flex-direction: column;
@@ -366,14 +390,32 @@
     padding-left: 5px;
 }
 
+.footer-links-box img{
+    background-color: beige;
+}
+
 .social-media{
     margin-top: 10px;
+}
+
+.social-media i{
+    margin-right: 2%;
+    color: black;
+    font-size: 1.3rem;
+    background-color: #F9CE10;
+    padding: 7px 5px;
+    border-radius: 100%;
+    cursor: pointer;
 }
 
 .footer-links-box a{
     text-decoration: none;
     margin-top: 10px;
-    color: white;
+    color: rgb(162, 162, 162);
+}
+
+.footer-links-box a:hover{
+    color: #F9CE10;
 }
 
 .footer-all-links img{
@@ -382,13 +424,33 @@
 }
 
 .footer-rights{
-    height: 20%;
+    height: 30%;
     display: flex;
     justify-content: center;
     align-items: center;
+    color: #7d7d7d;
 }
 
 .footer-contact-us{
     display: flex;
     margin: 15px 0;
 }
+
+
+.footer-contact-us  .email-links{
+    display: flex;
+    flex-direction: column;
+}
+
+.footer-contact-us .email-links .email:hover{
+    cursor: pointer;
+    color: #F9CE10;
+}
+
+.footer-contact-us i{
+    color: #F9CE10;
+    margin-right: 4%;
+    margin-top: 3%;
+    font-size: 1.2rem;
+}
+
