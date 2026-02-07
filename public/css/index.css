@@ -1,0 +1,394 @@
+*{
+    padding: 0;
+    margin: 0;
+}
+
+.container{
+    width: 100%;
+    height: 100vh;
+    margin:0;
+    padding: 0;
+}
+
+.header{
+    display: flex;
+    justify-content: space-around;
+    width: 100%;
+    height: 12vh;
+    border-bottom: 1px solid rgb(224, 223, 223);
+}
+
+.logo{
+    width: 15%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.header-icons{
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    width: 20%;
+}
+
+.navigator{
+    width: 40%;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.navigator a{
+    text-decoration: none;
+    color: rgb(74, 74, 74);
+    font-size: 1.2rem;
+}
+
+
+/* landing page */
+
+.landing-page{
+    height: 90vh;
+    display: flex;
+    padding-bottom: 5%;
+    background-color: ghostwhite;
+
+}
+
+.landing-page-content{
+    height: 100%;
+    width: 45%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    padding-left: 2%;
+}
+
+.landing-page-content span{
+    color: #F9CE10;
+}
+
+.landing-page-content h1{
+    font-size: 3.5rem;
+}
+
+.landing-page-content p{
+    font-size: 1.5rem;
+    font-weight: lighter;
+    color: gray;
+}
+
+.header-order-btn{
+    background-color: #F9CE10;
+    width: 40%;
+    height: 50%;
+    border: none;
+    border-radius: 12px;
+    font-weight:bold;
+    font-size: 1rem;
+}
+
+.order-btn{
+    background-color: #F9CE10;
+    width: 30%;
+    height: 8%;
+    border: none;
+    border-radius: 12px;
+    font-size: 1rem;
+    color: black;
+}
+.order-btn i{
+    font-size: 0.8rem;
+}
+
+.landing-page-content .advantages{
+    display: flex;
+    justify-content: space-between;
+    width: 80%;
+}
+
+.advantages p{
+    font-size: 1rem;
+    font-weight: lighter;
+}
+
+.advantages p i{
+    font-size: 0.7rem;
+    color: #F9CE10;
+}
+
+.landing-page-img{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height:100%;
+    width: 50%;
+}
+
+#landingImg{
+    height: 90%;
+    width: 90%;
+    border-radius: 20px;
+}
+
+.rating-box{
+    position: absolute;
+    top: 14%;
+    right: 3%;
+    background-color: white;
+    height: 100px;
+    width: 100px;
+    border-radius: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+.rating-box h1{
+    color: #F9CE10;
+    font-weight: bold;
+}
+.rating-box p{
+    color: rgb(114, 114, 114);
+}
+
+.happy-customer-box{
+    position: absolute;
+    right: 40%;
+    top: 85%;
+    background-color: white;
+    height: 100px;
+    width: 150px;
+    border-radius: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+.happy-customer-box h1{
+    color: #F9CE10;
+    font-weight: bold;
+}
+.happy-customer-box p{
+    color: rgb(114, 114, 114);
+}
+
+
+
+
+/* six promises */
+.six-promises{
+    margin-top: 5%;
+    height: fit-content;
+    width: 100%;
+}
+
+.promises-title{
+    height: 20%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    text-align: center;
+}
+.promises-title p{
+    margin-top: 1rem;
+    font-size: 1.4rem;
+    color: gray;
+}
+
+.promises-cards{
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    height: 700px;
+}
+
+.promises-card{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    align-items: center;
+    text-align: center;
+    width: 30%;
+    height: 60%;
+    margin-top: 5%;
+    border-radius: 20px;
+    box-shadow: 0px 0px 100px rgb(232, 232, 232);
+}
+
+.promises-card h2{
+    font-size: 1rem;
+}
+.promises-card p{
+    color: rgb(138, 137, 137);
+}
+
+.promises-card:hover{
+    box-shadow: 0px 0px 50px #f2e8bd;
+    transform: translateY(-1.05rem);
+}
+
+.promises-card img{
+    height: 60%;
+    width: 90%;
+    border-radius: 20px;
+}
+
+
+/* see cook fresh*/
+.cook-fresh{
+    background-color: black;
+    padding: 5% 0;
+    margin-top: 30%;
+    height: 100vh;
+    color: white;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    align-items: center;
+}
+
+.cook-fresh img{
+    height: 70%;
+    width: 70%;
+}
+
+.cook-fresh-content{
+    margin-top: 2rem;
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    width: 80%;
+}
+
+.cook-fresh h1{
+    margin-bottom: 2rem;
+    font-size: 3rem;
+}
+
+.cook-fresh span{
+    color: #F9CE10;
+}
+
+.cook-fresh h2{
+    font-weight: bold;
+    margin-bottom: 2%;
+}
+
+.cook-fresh p{
+    color: gainsboro;
+    font-weight: bold;
+}
+
+
+/*installation box*/
+
+.installation-box{
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+}
+
+.installation-box-content{
+    background-color: #F9CE10;
+    height: 40%;
+    width: 55%;
+    padding: 5% 20%;
+    border-radius: 20px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.installation-box-content h1{
+    font-weight: bolder;
+    font-size: 2.5rem;
+}
+
+.installation-box-content p{
+    font-size: 1.5rem;
+    color: rgb(46, 46, 46);
+}
+
+.installation-box-content button{
+    border: none;
+    border-radius: 8px;
+    background-color: white;
+    color: black;
+    height: 40px;
+    width: 200px;
+    margin-right: 8px;
+}
+
+.installation-box-explaination{
+    display: flex;
+    justify-content: space-evenly;
+    width: 60%;
+}
+
+.installation-box-explaination p{
+    font-size: 1rem;
+}
+
+
+/* footer */
+.footer{
+    background-color: black;
+    color: white;
+    height: 70vh;
+    display: flex;
+    flex-direction: column;
+}
+.footer-all-links{
+   height: 80%;
+   padding: 0 5px;
+   display: flex;
+   justify-content: space-around;
+   align-items: center;
+   border-bottom: 0.5px solid gray;
+}
+
+
+
+.footer-links-box{
+    width: 20%;
+    height: 80%;
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    padding-left: 5px;
+}
+
+.social-media{
+    margin-top: 10px;
+}
+
+.footer-links-box a{
+    text-decoration: none;
+    margin-top: 10px;
+    color: white;
+}
+
+.footer-all-links img{
+    height: 50px;
+    width: 100px;
+}
+
+.footer-rights{
+    height: 20%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.footer-contact-us{
+    display: flex;
+    margin: 15px 0;
+}
