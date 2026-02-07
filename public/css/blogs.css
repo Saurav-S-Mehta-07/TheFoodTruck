@@ -19,7 +19,7 @@
 .blogs-left-header{
     display: flex;
     justify-content: space-evenly;
-    width: 30%;
+    width: 40%;
 }
 
 .blogs-left-header img{
@@ -27,16 +27,20 @@
     height: 80px;
     width: 80px;
     margin-top: 3%;
+    cursor: pointer;
 }
 
 .blogs-left-header h1{
-    margin-right: 5%;
-    margin-top: 4%;
+    font-size: 1.5rem;
+    margin-right: 3%;
+    margin-top: 7%;
+    cursor: pointer;
 }
 
 .blogs-left-header p{
     height: 50%;
     margin-top: 7%;
+    cursor: pointer;
 }
 
 .blogs-left-header p span{
@@ -49,6 +53,7 @@
 
 .blogs-right-upper{
     width: 100%;
+    cursor: pointer;
 }
 
 .fresh-offer{
@@ -118,6 +123,8 @@
     width: 50%;
     justify-content: space-around;
     align-items: center;
+    cursor: pointer;
+
 }
 
 .blogs-header-icons{
@@ -125,6 +132,7 @@
     width: 50%;
     justify-content: space-around;
     align-items: center;
+    cursor: pointer;
 }
 
 .blogs-btns{
@@ -164,6 +172,20 @@
     justify-content: start;
 }
 
+.links-box1 .link-img{
+    margin-bottom: 10%;
+}
+
+.links-box1 .link-img img{
+    width: 150px;
+    height: 100%;
+    cursor: pointer;
+}
+
+.link-img #googleplay{
+    height: 95%;
+}
+
 .links-box1 a{
     margin-top: 10%;
     text-decoration: none;
@@ -176,6 +198,24 @@
 
 .links-box1 h3{
     color: rgb(148, 148, 148);
+}
+
+.social-media-icons{
+    width: 50%;
+    height: 10%;
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+}
+
+.social-media-icons p{
+    font-size: 1.5rem;
+}
+
+.social-media-icons p i{
+   color: rgb(117, 117, 117);
+    cursor: pointer;
+
 }
 
 .terms-privacy{
