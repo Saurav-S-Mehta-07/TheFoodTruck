@@ -28,6 +28,10 @@ app.get("/corporate",(req,res)=>{
     res.render("corporate");
 })
 
+app.get("/menu",(req,res)=>{
+    res.render("menu");
+})
+
 app.listen(PORT, ()=>{
     console.log(`Listening to PORT : ${PORT}`);
 })
