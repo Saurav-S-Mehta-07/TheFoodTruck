@@ -3,28 +3,34 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
-    <link rel="stylesheet" href="css/menu.css" />
+    <title>Menu</title>
+    <link rel="stylesheet" href="/css/menu.css" />
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css"
-      integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw=="
       crossorigin="anonymous"
       referrerpolicy="no-referrer"
     />
   </head>
+
   <body>
     <div class="menu-page">
+
+      <!-- Header -->
       <div class="menu-header">
         <div class="logo">
-                    <a href="/home"><img src="https://s3-ap-southeast-1.amazonaws.com/foodvista.1/7b92391c-fce4-44d5-84a3-1541c4b73e96.png" alt="logo" /></a>
+          <a href="/home">
+            <img src="https://s3-ap-southeast-1.amazonaws.com/foodvista.1/7b92391c-fce4-44d5-84a3-1541c4b73e96.png" alt="logo" />
+          </a>
         </div>
+
         <div class="navigator">
           <a href="/menu">Menu</a>
           <a href="/corporate">Corporate</a>
           <a href="/about">About</a>
           <a href="/blogs">Blogs</a>
         </div>
+
         <div class="header-icons">
           <button class="header-order-btn">order now</button>
           <p><i class="fa-solid fa-cart-shopping"></i></p>
@@ -32,107 +38,144 @@
         </div>
       </div>
 
+      <!-- Landing -->
       <div class="menu-content">
 
         <div class="landing-location">
-            <div class="landing-content">
-                <h3><i>fresh flavors await</i></h3>
-                <h1>OUR MENU</h1>
-                <p>Discover our curated selection of fresh, healthy, and delicious meals <br> crafted with love</p>
+          <div class="landing-content">
+            <h3><i>fresh flavors await</i></h3>
+            <h1>OUR MENU</h1>
+            <p>
+              Discover our curated selection of fresh, healthy, and delicious meals
+              <br />
+              crafted with love
+            </p>
+          </div>
+
+          <div class="location-content">
+            <div class="find-location">
+              <div><i class="fa-solid fa-location-dot"></i></div>
+              <div>
+                <p>Delivering to</p>
+                <h2>Koramangala, Bengaluru</h2>
+              </div>
+              <div><i class="fa-solid fa-angle-down"></i></div>
             </div>
-            <div class="location-content">
-                <div class="find-location">
-                    <div><i class="fa-solid fa-location-dot"></i></div>
-                    <div>
-                        <p>Delivering to</p>
-                        <h2>Koramangala, Bengaluru</h2>
-                    </div>
-                    <div><i class="fa-solid fa-angle-down"></i></div>
-                </div>
-                <div class="locate-me">
-                    <div><i class="fa-solid fa-location-arrow"></i></div>
-                    <div><p>Locate Me</p></div>
-                </div>
+
+            <div class="locate-me">
+              <div><i class="fa-solid fa-location-arrow"></i></div>
+              <div><p>Locate Me</p></div>
             </div>
+          </div>
         </div>
 
+        <!-- Filters -->
         <div class="menu-filters">
 
-            <div class="categories-filters">
+          <div class="categories-filters">
+            <button style="background-color: #F9CE10;">All</button>
+            <button>Burrito Bowls</button>
+            <button>Asian Bowls</button>
+            <button>Continental Bowls</button>
+            <button>Korean Bowls</button>
+            <button>Indian Meals</button>
+            <button>Pastas</button>
+          </div>
 
-                <button style="background-color: #F9CE10;">All</button>
-                <button>Burrito Bowls</button>
-                <button>Asian Bowls</button>
-                <button>Continental Bowls</button>
-                <button>Korean Bowls</button>
-                <button>Indian Meals</button>
-                <button>Pastas</button>
-
+          <div class="other-filters">
+            <div>
+              <button id="veg">
+                <i class="fa-regular fa-circle-dot" style="color: #47D147;"></i>
+                Veg
+              </button>
+              <button id="non-veg">
+                <i class="fa-solid fa-drumstick-bite" style="color: red;"></i>
+                Non-Veg
+              </button>
+              <button>Price <i class="fa-solid fa-up-down"></i></button>
+              <button><i class="fa-solid fa-filter"></i> Filters</button>
+              <button>Reset All</button>
             </div>
+          </div>
 
-            <div class="other-filters">
+          <!-- Dynamic Menu Items -->
+          <div class="all-menu-items">
 
-                <div>
-                    <button id="veg"><i class="fa-regular fa-circle-dot" style="color: #47D147;"></i> Veg</button>
-                    <button id="non-veg"><i class="fa-solid fa-drumstick-bite" style="color: red;"></i> Non-Veg</button>
-                    <button>Price <i class="fa-solid fa-up-down"></i></button>
-                    <button><i class="fa-solid fa-filter"></i> Filters</button>
-                    <button>Reset All</button>
+            <% menuItems.forEach(item => { %>
+              <div class="item-card">
+
+                <div class="item-img-box">
+                  <div class="content-on-img">
+                    <button><%= item.foodType === "veg" ? "Veg" : "Non-Veg" %></button>
+
+                    <% if(item.tags && item.tags.length > 0){ %>
+                      <button><%= item.tags[0] %></button>
+
+                      <% if(item.tags.length > 1){ %>
+                        <button>+<%= item.tags.length - 1 %> More</button>
+                      <% } %>
+                    <% } %>
+                  </div>
+
+                  <img src="<%= item.imageUrl %>" alt="<%= item.title %>" />
                 </div>
 
-            </div>
+                <div class="item-title-category">
+                  <div class="title-category">
+                    <h4 class="title"><%= item.title %></h4>
+                    <p class="category">
+                      Category: <%= item.category?.name || "General" %>
+                    </p>
+                  </div>
 
-            <div class="all-menu-items">
-
-                <%for(let i = 0; i<30; i++){%>
-                   <div class="item-card">
-                     <div class="item-img-box">
-                        <div class="content-on-img">
-                            <button>Veg</button>
-                            <button>Main Course</button>
-                            <button>+3 More</button>
-                        </div>
-                        <img src="https://s3-ap-southeast-1.amazonaws.com/foodvista.1/3e01f3e5-cc79-4a33-8ab7-3ebac3b92fb3.jpg" alt="burrito-bowl">
-                     </div>
-                     <div class="item-title-category">
-                        <div class="title-category">
-                            <h4 class="title">MEXICAN BURRITO BOWL</h4>
-                            <p class="category">Category: Burrito Bowls</p>
-                        </div>
-                        <div class="health">
-                            <i class="fa-regular fa-circle-dot" style="color: #47D147;"></i>
-                            <button>291 cal | Calorie</button>
-                        </div>
-                     </div>
-                     <div class="discription-price">
-                        <p class="discription">Here is our all time favourite signature burrito bowl. Paneer steaks, infused with hot and tangy habanero-...</p>
-                        <div class="price">
-                            <h2 id="currPrice">&#8377;133</h2>
-                            <p id="prevPrice">&#8377;299</p>
-                            <p id="discount">( 56% OFF )</p>
-                        </div>
-                     </div>
-                     <div class="addCart-custom">
-                        <button class="addCart-btn">+ Add to Cart</button>
-                        <p>Customisable</p>
-                     </div>
+                  <div class="health">
+                    <i class="fa-regular fa-circle-dot" style="color: #47D147;"></i>
+                    <button><%= item.calories || 0 %> cal | Calorie</button>
+                  </div>
                 </div>
-                <%}%>
-                
 
-            </div>
+                <div class="discription-price">
+                  <p class="discription"><%= item.description %></p>
 
+                  <div class="price">
+                    <h2 id="currPrice">₹<%= item.price %></h2>
+
+                    <% if(item.originalPrice){ %>
+                      <p id="prevPrice">₹<%= item.originalPrice %></p>
+
+                      <%
+                        const discount = Math.round(
+                          ((item.originalPrice - item.price) /
+                          item.originalPrice) * 100
+                        );
+                      %>
+
+                      <p id="discount">(<%= discount %>% OFF)</p>
+                    <% } %>
+                  </div>
+                </div>
+
+                <div class="addCart-custom">
+                  <button class="addCart-btn">+ Add to Cart</button>
+
+                  <% if(item.customizable){ %>
+                    <p>Customisable</p>
+                  <% } %>
+                </div>
+
+              </div>
+            <% }) %>
+
+          </div>
         </div>
-
       </div>
 
+      <!-- Footer -->
       <div class="menu-footer">
         <div class="footer-all-links">
+
           <div class="footer-links-box">
-            <img
-              src="https://s3-ap-southeast-1.amazonaws.com/foodvista.1/7b92391c-fce4-44d5-84a3-1541c4b73e96.png"
-              alt=""
-            />
+            <img src="https://s3-ap-southeast-1.amazonaws.com/foodvista.1/7b92391c-fce4-44d5-84a3-1541c4b73e96.png" alt="" />
             <p style="margin: 15px 0">
               Bringing you fresh, global cuisine delivered right to your door.
               Every bowl tells a story of flavor, quality, and care.
@@ -143,31 +186,36 @@
               <i class="fa-brands fa-twitter"></i>
             </div>
           </div>
+
           <div class="footer-links-box">
             <h2>Quick Links</h2>
-            <a href="">Menu</a>
-            <a href="">Locations</a>
-            <a href="">About Us</a>
-            <a href="">Corporate Ordering</a>
-            <a href="">Bulk Order</a>
-            <a href="">Blogs</a>
+            <a href="/menu">Menu</a>
+            <a href="#">Locations</a>
+            <a href="/about">About Us</a>
+            <a href="/corporate">Corporate Ordering</a>
+            <a href="#">Bulk Order</a>
+            <a href="/blogs">Blogs</a>
           </div>
+
           <div class="footer-links-box">
             <h2>Support</h2>
-            <a href="">Returns & Refunds</a>
-            <a href="">Privacy Policy</a>
-            <a href="">Terms</a>
+            <a href="#">Returns & Refunds</a>
+            <a href="#">Privacy Policy</a>
+            <a href="#">Terms</a>
           </div>
+
           <div class="footer-links-box">
             <h2>Contact Us</h2>
+
             <div>
               <div class="footer-contact-us">
                 <i class="fa-solid fa-location-dot"></i>
                 <p>
-                  Freshmenu, Sri Vaaru Plaza, Ground Floor, 19th Main Road Next
-                  to ProBike HSR Layout 1st sector Bangalore 560102
+                  Freshmenu, Sri Vaaru Plaza, Ground Floor, 19th Main Road
+                  Next to ProBike HSR Layout 1st sector Bangalore 560102
                 </p>
               </div>
+
               <div class="footer-contact-us">
                 <i class="fa-regular fa-envelope"></i>
                 <div class="email-links">
@@ -176,18 +224,21 @@
                 </div>
               </div>
             </div>
+
             <p>Office Hours:</p>
             <p>Monday - Friday (9:00 AM - 6:00 PM)</p>
           </div>
+
         </div>
 
         <div class="footer-rights">
           <p>
-            &copy;2026 TheFoodTruck. All rights reserved. Made with ❤️ for food
-            lovers everywhere.
+            &copy;2026 TheFoodTruck. All rights reserved.
+            Made with ❤️ for food lovers everywhere.
           </p>
         </div>
       </div>
+
     </div>
   </body>
 </html>
