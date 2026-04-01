@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" /><title>Owner Coupons</title><link rel="stylesheet" href="/css/owner.css" /></head>
+<body>
+<%- include("../../partials/ownerHeader") %>
+<%- include("../../partials/flashMessages") %>
+<div class="owner-shell">
+  <%- include("../partials/sidebar", { restaurant }) %>
+  <main class="owner-main">
+    <h1><%= restaurant.name %> - Coupons</h1>
+    <p><a class="owner-btn primary" href="/restaurants/<%= restaurant._id %>/coupons/create">Create Coupon</a></p>
+    <% if (!coupons.length) { %><div class="owner-card">No coupons yet.</div><% } %>
+    <% coupons.forEach(coupon => { %>
+      <div class="owner-card">
+        <h3><%= coupon.code %> - <%= coupon.discountType === 'percentage' ? coupon.discountValue + '%' : 'Rs ' + coupon.discountValue %></h3>
+        <p><%= coupon.description %></p>
+        <p><strong>Valid:</strong> <%= new Date(coupon.validFrom).toLocaleDateString() %> to <%= new Date(coupon.validUntil).toLocaleDateString() %></p>
+        <p><strong>Status:</strong> <%= coupon.isActive ? 'Active' : 'Inactive' %></p>
+        <a class="owner-btn" href="/restaurants/<%= restaurant._id %>/coupons/<%= coupon._id %>/edit">Edit</a>
+        <form action="/restaurants/<%= restaurant._id %>/coupons/<%= coupon._id %>?_method=DELETE" method="POST" style="display:inline;">
+          <button class="owner-btn danger" type="submit">Delete</button>
+        </form>
+      </div>
+    <% }) %>
+  </main>
+</div>
+</body></html>
+

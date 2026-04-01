@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bulk Order - The Food Truck</title>
+    <link rel="stylesheet" href="/css/orders.css">
+</head>
+<body>
+    <%- include("../partials/userHeader") %>
+    <%- include("../partials/flashMessages") %>
+
+    <div class="checkout-container">
+        <h1>Bulk Order (Single Restaurant)</h1>
+        <p style="color:#555; margin-bottom:16px;">Select items from restaurants and schedule daily meal orders.</p>
+
+        <div class="checkout-content">
+            <div class="order-summary">
+                <h2>Select Items by Restaurant</h2>
+                <% restaurantGroups.forEach(group => { %>
+                    <div class="summary-item" style="background:#fffbe8; border-left:4px solid #f9ce10; margin-bottom: 20px;">
+                        <div class="item-info">
+                            <h4><%= group.restaurantName %></h4>
+                            <p><strong>Restaurant ID:</strong> <%= group.restaurantId %></p>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-left: 20px; margin-bottom: 20px;">
+                        <% group.items.forEach(item => { %>
+                            <div class="summary-item" style="border: 1px solid #e5e7eb; margin-bottom: 10px; padding: 10px;">
+                                <div style="display: flex; align-items: center; gap: 10px;">
+                                    <input type="checkbox" 
+                                           id="item_<%= item._id %>" 
+                                           name="selectedItems" 
+                                           value="<%= item._id %>"
+                                           data-restaurant="<%= group.restaurantId %>"
+                                           data-price="<%= item.price %>"
+                                           data-title="<%= item.title %>">
+                                    <label for="item_<%= item._id %>" style="margin: 0; flex: 1;">
+                                        <strong><%= item.title %></strong> - Rs <%= item.price %>
+                                        <% if (item.description) { %>
+                                            <br><small style="color: #666;"><%= item.description %></small>
+                                        <% } %>
+                                    </label>
+                                    <div style="display: flex; align-items: center; gap: 5px;">
+                                        <label for="qty_<%= item._id %>" style="font-size: 12px;">Qty:</label>
+                                        <input type="number" 
+                                               id="qty_<%= item._id %>" 
+                                               name="quantity_<%= item._id %>" 
+                                               value="1" 
+                                               min="1" 
+                                               max="10" 
+                                               style="width: 50px; padding: 2px;"
+                                               disabled>
+                                    </div>
+                                </div>
+                                <div style="margin-top: 5px;">
+                                    <input type="text" 
+                                           id="instructions_<%= item._id %>" 
+                                           name="instructions_<%= item._id %>" 
+                                           placeholder="Special instructions..." 
+                                           style="width: 100%; padding: 4px; border: 1px solid #ddd; border-radius: 4px;"
+                                           disabled>
+                                </div>
+                            </div>
+                        <% }) %>
+                    </div>
+                <% }) %>
+            </div>
+
+            <div class="checkout-form">
+                <h2>Bulk Schedule</h2>
+                <form action="/orders/bulk/create" method="POST" id="bulkOrderForm">
+                    <input type="hidden" name="restaurantId" id="selectedRestaurantId">
+                    <input type="hidden" name="items" id="selectedItemsData">
+                    
+                    <div class="form-group">
+                        <label for="mealType">Meal Slot</label>
+                        <select id="mealType" name="mealType" required>
+                            <% mealTypes.forEach(type => { %>
+                                <option value="<%= type %>"><%= type %></option>
+                            <% }) %>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="startDate">Start Date</label>
+                        <input type="date" id="startDate" name="startDate" value="<%= defaultStartDate %>" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="days">Number of Days (1-30)</label>
+                        <input type="number" id="days" name="days" min="1" max="30" value="7" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="street">Street Address</label>
+                        <input type="text" id="street" name="street" value="<%= currentUser && currentUser.address ? currentUser.address.street || '' : '' %>" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="city">City</label>
+                        <input type="text" id="city" name="city" value="<%= currentUser && currentUser.address ? currentUser.address.city || '' : '' %>" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="state">State</label>
+                        <input type="text" id="state" name="state" value="<%= currentUser && currentUser.address ? currentUser.address.state || '' : '' %>" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="pincode">Pincode</label>
+                        <input type="text" id="pincode" name="pincode" value="<%= currentUser && currentUser.address ? currentUser.address.pincode || '' : '' %>" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="specialInstructions">Special Instructions (Optional)</label>
+                        <textarea id="specialInstructions" name="specialInstructions" rows="3" maxlength="1000"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="paymentMethod">Payment Method</label>
+                        <select id="paymentMethod" name="paymentMethod" required>
+                            <option value="cod">Cash on Delivery</option>
+                            <option value="online">Online Payment</option>
+                        </select>
+                    </div>
+
+                    <div class="checkout-actions">
+                        <a href="/" class="btn btn-secondary">Back to Home</a>
+                        <button type="submit" class="btn btn-primary" id="submitBulkOrder" disabled>Create Bulk Order</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const checkboxes = document.querySelectorAll('input[name="selectedItems"]');
+            const submitButton = document.getElementById('submitBulkOrder');
+            const form = document.getElementById('bulkOrderForm');
+            const selectedRestaurantIdInput = document.getElementById('selectedRestaurantId');
+            const selectedItemsDataInput = document.getElementById('selectedItemsData');
+
+            function updateFormState() {
+                const checkedBoxes = document.querySelectorAll('input[name="selectedItems"]:checked');
+                const selectedRestaurants = new Set();
+                
+                checkedBoxes.forEach(cb => {
+                    selectedRestaurants.add(cb.dataset.restaurant);
+                });
+
+                if (checkedBoxes.length > 0 && selectedRestaurants.size === 1) {
+                    submitButton.disabled = false;
+                    selectedRestaurantIdInput.value = Array.from(selectedRestaurants)[0];
+                    
+                    const selectedItems = [];
+                    checkedBoxes.forEach(cb => {
+                        const itemId = cb.value;
+                        const qtyInput = document.getElementById('qty_' + itemId);
+                        const instructionsInput = document.getElementById('instructions_' + itemId);
+                        
+                        selectedItems.push({
+                            menuItemId: itemId,
+                            quantity: qtyInput ? qtyInput.value : 1,
+                            specialInstructions: instructionsInput ? instructionsInput.value : ''
+                        });
+                    });
+                    
+                    selectedItemsDataInput.value = JSON.stringify(selectedItems);
+                } else {
+                    submitButton.disabled = true;
+                    selectedRestaurantIdInput.value = '';
+                    selectedItemsDataInput.value = '';
+                }
+            }
+
+            checkboxes.forEach(cb => {
+                cb.addEventListener('change', function() {
+                    const qtyInput = document.getElementById('qty_' + this.value);
+                    const instructionsInput = document.getElementById('instructions_' + this.value);
+                    
+                    if (this.checked) {
+                        qtyInput.disabled = false;
+                        instructionsInput.disabled = false;
+                    } else {
+                        qtyInput.disabled = true;
+                        instructionsInput.disabled = true;
+                    }
+                    
+                    updateFormState();
+                });
+            });
+
+            form.addEventListener('submit', function(e) {
+                const checkedBoxes = document.querySelectorAll('input[name="selectedItems"]:checked');
+                if (checkedBoxes.length === 0) {
+                    e.preventDefault();
+                    alert('Please select at least one item for bulk order.');
+                    return;
+                }
+                
+                const selectedRestaurants = new Set();
+                checkedBoxes.forEach(cb => {
+                    selectedRestaurants.add(cb.dataset.restaurant);
+                });
+                
+                if (selectedRestaurants.size > 1) {
+                    e.preventDefault();
+                    alert('Please select items from only one restaurant for bulk order.');
+                    return;
+                }
+            });
+        });
+    </script>
+</body>
+</html>

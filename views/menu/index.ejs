@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Menu - The Food Truck</title>
+  <link rel="stylesheet" href="/css/menu.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
+</head>
+<body>
+  <%- include("../partials/userHeader") %>
+  <%- include("../partials/flashMessages") %>
+
+  <div class="menu-page">
+    <div class="menu-content">
+      <div class="menu-header-section">
+        <h1>OUR MENU</h1>
+        <p>Discover our curated selection of fresh, healthy, and delicious meals</p>
+      </div>
+
+      <div class="menu-filters">
+        <div class="categories-filters">
+          <a href="/menu"><button class="<%= !currentCategory ? 'active' : '' %>">All</button></a>
+          <% categories.forEach(cat => { %>
+            <a href="/menu?category=<%= cat.slug %>">
+              <button class="<%= currentCategory === cat.slug ? 'active' : '' %>"><%= cat.name %></button>
+            </a>
+          <% }); %>
+        </div>
+
+        <div class="other-filters">
+          <form action="/menu" method="GET" class="filter-form">
+            <input type="hidden" name="category" value="<%= currentCategory || '' %>">
+            <select name="foodType">
+              <option value="all" <%= foodType === 'all' || !foodType ? 'selected' : '' %>>All Types</option>
+              <option value="veg" <%= foodType === 'veg' ? 'selected' : '' %>>Veg</option>
+              <option value="non-veg" <%= foodType === 'non-veg' ? 'selected' : '' %>>Non-Veg</option>
+            </select>
+
+            <select name="sort">
+              <option value="" <%= !sort ? 'selected' : '' %>>Sort By</option>
+              <option value="popular" <%= sort === 'popular' ? 'selected' : '' %>>Popular</option>
+              <option value="price-low" <%= sort === 'price-low' ? 'selected' : '' %>>Price: Low to High</option>
+              <option value="price-high" <%= sort === 'price-high' ? 'selected' : '' %>>Price: High to Low</option>
+            </select>
+
+            <input type="text" name="search" placeholder="Search menu..." value="<%= search || '' %>">
+            <button type="submit">Apply</button>
+            <a href="/menu" class="reset-btn">Reset</a>
+          </form>
+        </div>
+      </div>
+      <div class="menu-section">
+        <% if (menuItems.length === 0) { %>
+          <div class="no-items">
+            <h3>No items found</h3>
+            <p>Try adjusting your filters</p>
+          </div>
+        <% } else { %>
+          <div class="menu-grid">
+            <% menuItems.forEach(item => { %>
+              <div class="menu-item">
+                <div class="item-image">
+                  <% if (item.imageUrl) { %><img src="<%= item.imageUrl %>" alt="<%= item.title %>"><% } else { %><div class="no-image">No Image</div><% } %>
+                  <% if (item.foodType === 'veg') { %><span class="veg-indicator">Veg</span><% } else { %><span class="non-veg-indicator">Non-Veg</span><% } %>
+                </div>
+                <div class="item-content">
+                  <h3><a href="/menu/<%= item._id %>"><%= item.title %></a></h3>
+                  <p><%= item.description %></p>
+                  <div class="item-meta">
+                    <% if (item.calories) { %><span><%= item.calories %> cal</span><% } %>
+                    <% if (item.tags && item.tags.length > 0) { %><span><%= item.tags.slice(0, 2).join(', ') %></span><% } %>
+                  </div>
+                  <div class="item-footer">
+                    <div class="price-section">
+                      <span class="price">Rs <%= item.price %></span>
+                      <% if (item.originalPrice && item.originalPrice > item.price) { %><span class="original-price">Rs <%= item.originalPrice %></span><% } %>
+                    </div>
+                    <form action="/cart/add" method="POST" class="add-to-cart-form">
+                        <input type="hidden" name="menuItemId" value="<%= item._id %>">
+                        <input type="hidden" name="quantity" value="1">
+                        <select name="customizationOption" style="margin: 0 6px;">
+                          <option value="Default" selected>Default</option>
+                          <option value="Less Spicy">Less Spicy</option>
+                          <option value="Extra Spicy">Extra Spicy</option>
+                          <option value="No Onion">No Onion</option>
+                          <option value="Extra Cheese">Extra Cheese</option>
+                        </select>
+                        <button type="submit" class="add-to-cart-btn">Add to Cart</button>
+                      </form>
+                  </div>
+                </div>
+              </div>
+            <% }); %>
+          </div>
+        <% } %>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.querySelector('.filter-form')?.addEventListener('submit', function(e) {
+      const formData = new FormData(this);
+      const params = new URLSearchParams();
+      for (let [key, value] of formData) {
+        if (value && value !== 'all' && value !== '') params.append(key, value);
+      }
+      window.location.href = '/menu' + (params.toString() ? '?' + params.toString() : '');
+      e.preventDefault();
+    });
+  </script>
+</body>
+</html>
+
+
+
+
+

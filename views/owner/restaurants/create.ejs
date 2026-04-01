@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" /><title>Create Restaurant</title><link rel="stylesheet" href="/css/owner.css" /></head>
+<body>
+<%- include("../../partials/ownerHeader") %>
+<%- include("../../partials/flashMessages") %>
+<div class="owner-shell">
+  <%- include("../partials/sidebar") %>
+  <main class="owner-main">
+    <h1>Create Restaurant</h1>
+    <form class="owner-form" action="/restaurants/create" method="POST">
+      <input name="name" placeholder="Restaurant Name" required />
+      <textarea name="description" placeholder="Description"></textarea>
+      <div class="owner-row">
+        <input name="phone" placeholder="Phone" required />
+        <input name="email" placeholder="Email" type="email" />
+      </div>
+      <input name="imageUrl" placeholder="Image URL (optional)" />
+      <input name="cuisine" placeholder="Cuisine (comma separated)" />
+      <div class="owner-row">
+        <input name="street" placeholder="Street" required />
+        <input name="city" placeholder="City" required />
+      </div>
+      <div class="owner-row">
+        <input name="state" placeholder="State" required />
+        <input name="pincode" placeholder="Pincode" required />
+      </div>
+      <button class="owner-btn primary" type="submit">Create</button>
+      <a class="owner-btn" href="/restaurants">Cancel</a>
+    </form>
+  </main>
+</div>
+</body></html>
+

@@ -9,6 +9,39 @@ const categoriesData = [
   { name: "Desserts", slug: "desserts", imageUrl: "https://s3-ap-southeast-1.amazonaws.com/foodvista.1/3e01f3e5-cc79-4a33-8ab7-3ebac3b92fb3.jpg" }
 ];
 
+const restaurantData = [
+  {
+    name: "The Food Truck",
+    description: "Delicious bowls and meals from around the world",
+    address: {
+      street: "123 Main Street",
+      city: "Delhi",
+      state: "Delhi",
+      pincode: "110001",
+      coordinates: {
+        latitude: 28.6139,
+        longitude: 77.2090
+      }
+    },
+    phone: "+91-9876543210",
+    email: "info@thefoodtruck.com",
+    operatingHours: {
+      monday: { open: "10:00", close: "22:00" },
+      tuesday: { open: "10:00", close: "22:00" },
+      wednesday: { open: "10:00", close: "22:00" },
+      thursday: { open: "10:00", close: "22:00" },
+      friday: { open: "10:00", close: "22:00" },
+      saturday: { open: "10:00", close: "22:00" },
+      sunday: { open: "10:00", close: "22:00" }
+    },
+    cuisine: ["Mexican", "Asian", "Continental", "Korean", "Indian", "Italian"],
+    imageUrl: "https://s3-ap-southeast-1.amazonaws.com/foodvista.1/3e01f3e5-cc79-4a33-8ab7-3ebac3b92fb3.jpg",
+    deliveryRadius: 15,
+    deliveryFee: 50,
+    minimumOrder: 100
+  }
+];
+
 const menuData = [
   {
     title: "Smoky Chipotle Burrito Bowl",
@@ -108,4 +141,4 @@ const menuData = [
   }
 ];
 
-module.exports = { categoriesData, menuData };
+module.exports = { categoriesData, restaurantData, menuData };

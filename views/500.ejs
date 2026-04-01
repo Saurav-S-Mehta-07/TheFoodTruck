@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Server Error - The Food Truck</title>
+  <link rel="stylesheet" href="/css/menu.css" />
+</head>
+<body>
+  <%- include("partials/userHeader") %>
+  <%- include("partials/flashMessages") %>
+
+  <main class="container" style="padding: 2rem 1rem; max-width: 900px; margin: 0 auto;">
+    <h1 style="margin-bottom: 0.5rem;">Something went wrong</h1>
+    <p style="margin-bottom: 1rem; color: #555;">Please try again in a moment.</p>
+    <% if (typeof errorStatus !== 'undefined') { %>
+      <p style="margin-bottom: 1rem; color: #777;">Error code: <%= errorStatus %></p>
+    <% } %>
+    <a href="/home" class="btn btn-primary">Go Home</a>
+  </main>
+</body>
+</html>

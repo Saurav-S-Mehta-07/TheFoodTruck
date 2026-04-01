@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" /><title>Edit Coupon</title><link rel="stylesheet" href="/css/owner.css" /></head>
+<body>
+<%- include("../../partials/ownerHeader") %>
+<%- include("../../partials/flashMessages") %>
+<div class="owner-shell">
+  <%- include("../partials/sidebar", { restaurant }) %>
+  <main class="owner-main">
+    <h1>Edit Coupon</h1>
+    <form class="owner-form" action="/restaurants/<%= restaurant._id %>/coupons/<%= coupon._id %>/edit" method="POST">
+      <input name="code" value="<%= coupon.code %>" required />
+      <textarea name="description" required><%= coupon.description %></textarea>
+      <div class="owner-row">
+        <select name="discountType" required>
+          <option value="percentage" <%= coupon.discountType==='percentage'?'selected':'' %>>Percentage</option>
+          <option value="fixed" <%= coupon.discountType==='fixed'?'selected':'' %>>Fixed</option>
+        </select>
+        <input name="discountValue" type="number" step="0.01" value="<%= coupon.discountValue %>" required />
+      </div>
+      <div class="owner-row">
+        <input name="minimumOrderAmount" type="number" step="0.01" value="<%= coupon.minimumOrderAmount || '' %>" />
+        <input name="maximumDiscount" type="number" step="0.01" value="<%= coupon.maximumDiscount || '' %>" />
+      </div>
+      <div class="owner-row">
+        <input name="usageLimit" type="number" value="<%= coupon.usageLimit || '' %>" />
+        <input name="applicableMealTypes" value="<%= (coupon.applicableMealTypes || []).join(', ') %>" />
+      </div>
+      <div class="owner-row">
+        <input name="validFrom" type="date" value="<%= new Date(coupon.validFrom).toISOString().split('T')[0] %>" required />
+        <input name="validUntil" type="date" value="<%= new Date(coupon.validUntil).toISOString().split('T')[0] %>" required />
+      </div>
+      <label><input type="checkbox" name="isActive" <%= coupon.isActive ? 'checked' : '' %> /> Active</label>
+      <button class="owner-btn primary" type="submit">Save</button>
+      <a class="owner-btn" href="/restaurants/<%= restaurant._id %>/coupons">Back</a>
+    </form>
+  </main>
+</div>
+</body></html>
+

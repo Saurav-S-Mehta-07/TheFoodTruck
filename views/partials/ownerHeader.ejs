@@ -1,0 +1,112 @@
+<link
+  rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css"
+  integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw=="
+  crossorigin="anonymous"
+  referrerpolicy="no-referrer"
+/>
+
+<style>
+  .owner-header {
+    display: flex;
+    justify-content: space-around;
+    width: 100%;
+    min-height: 72px;
+    border-bottom: 1px solid rgb(224, 223, 223);
+    background: #fff;
+  }
+
+  .owner-header .logo {
+    width: 15%;
+    min-width: 140px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .owner-header .logo img {
+    cursor: pointer;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+
+  .owner-header .navigator {
+    width: 35%;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .owner-header .navigator a {
+    text-decoration: none;
+    color: rgb(74, 74, 74);
+    font-size: 1.1rem;
+  }
+
+  .owner-header .navigator a:hover {
+    color: #f9ce10;
+  }
+
+  .owner-header .header-actions {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 28%;
+    min-width: 280px;
+    gap: 12px;
+  }
+
+  .owner-header .plain-link {
+    text-decoration: none;
+    color: inherit;
+  }
+
+  @media (max-width: 900px) {
+    .owner-header {
+      flex-wrap: wrap;
+      padding: 8px;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .owner-header .logo,
+    .owner-header .navigator,
+    .owner-header .header-actions {
+      width: auto;
+      min-width: unset;
+    }
+
+    .owner-header .navigator {
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+  }
+</style>
+
+<div class="owner-header">
+  <div class="logo">
+    <a href="/home"><img src="https://s3-ap-southeast-1.amazonaws.com/foodvista.1/7b92391c-fce4-44d5-84a3-1541c4b73e96.png" alt="logo" /></a>
+  </div>
+
+  <div class="navigator">
+    <a href="/blogs">Blogs</a>
+    <a href="/corporate">Corporate</a>
+    <a href="/about">About</a>
+    <% if (currentUser && currentUser.role === "owner") { %>
+      <a href="/restaurants/dashboard">Owner</a>
+    <% } %>
+  </div>
+
+  <div class="header-actions">
+    <% if (currentUser && currentUser.role === "owner") { %>
+      <form action="/auth/logout" method="POST" style="display:inline; margin:0;">
+        <button type="submit" style="border:none; background:#ef4444; color:#fff; padding:6px 10px; border-radius:6px; cursor:pointer;">Logout</button>
+      </form>
+    <% } else { %>
+      <a href="/auth/login" class="plain-link">Log In</a>
+      <a href="/auth/signup?role=owner" class="plain-link">Sign Up</a>
+    <% } %>
+  </div>
+</div>

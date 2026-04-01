@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Orders - The Food Truck</title>
+    <link rel="stylesheet" href="/css/orders.css">
+</head>
+<body>
+    <%- include("../partials/userHeader") %>
+    <%- include("../partials/flashMessages") %>
+    <div class="orders-container">
+        <h1>Your Orders</h1>
+
+        <% if (orders.length === 0) { %>
+            <div class="empty-orders">
+                <h2>No orders yet</h2>
+                <p>Start your food journey with us!</p>
+                <a href="/menu" class="btn btn-primary">Browse Menu</a>
+            </div>
+        <% } else { %>
+            <div class="orders-list">
+                <% orders.forEach(order => { %>
+                    <div class="order-card">
+                        <div class="order-header">
+                            <h3>Order #<%= order._id.toString().slice(-8) %></h3>
+                            <span class="order-status status-<%= order.orderStatus.toLowerCase().replace(' ', '-') %>"><%= order.orderStatus %></span>
+                        </div>
+                        <div class="order-details">
+                            <p><strong>Date:</strong> <%= new Date(order.createdAt).toLocaleDateString() %></p>
+                            <% if (order.restaurant) { %>
+                                <p><strong>Restaurant:</strong> <%= order.restaurant.name %></p>
+                            <% } %>
+                            <% if (order.mealType) { %>
+                                <p><strong>Meal Type:</strong> <%= order.mealType %></p>
+                            <% } %>
+                            <% if (order.scheduledFor) { %>
+                                <p><strong>Scheduled For:</strong> <%= new Date(order.scheduledFor).toLocaleString() %></p>
+                            <% } %>
+                            <p><strong>Total:</strong> Rs <%= order.totalAmount.toFixed(2) %></p>
+                            <p><strong>Items:</strong> <%= order.items.length %></p>
+                            <p><strong>Payment:</strong> <%= order.paymentMethod.toUpperCase() %> (<%= order.paymentStatus %>)</p>
+                        </div>
+                        <div class="order-actions">
+                            <a href="/orders/<%= order._id %>" class="btn btn-secondary">View Details</a>
+                        </div>
+                    </div>
+                <% }); %>
+            </div>
+        <% } %>
+    </div>
+</body>
+</html>

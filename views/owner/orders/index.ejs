@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" /><title>Owner Orders</title><link rel="stylesheet" href="/css/owner.css" /></head>
+<body>
+<%- include("../../partials/ownerHeader") %>
+<%- include("../../partials/flashMessages") %>
+<div class="owner-shell">
+  <%- include("../partials/sidebar", { restaurant }) %>
+  <main class="owner-main">
+    <h1><%= restaurant.name %> - Orders</h1>
+    <form method="GET" action="/restaurants/<%= restaurant._id %>/orders" class="owner-form" style="margin-bottom:12px; max-width:320px;">
+      <select name="status" onchange="this.form.submit()">
+        <option value="">All statuses</option>
+        <% statuses.forEach(s => { %>
+          <option value="<%= s %>" <%= query.status === s ? 'selected' : '' %>><%= s %></option>
+        <% }) %>
+      </select>
+    </form>
+
+    <% if (!orders.length) { %><div class="owner-card">No orders found.</div><% } %>
+    <% orders.forEach(order => { %>
+      <div class="owner-card">
+        <p><strong>Order:</strong> #<%= order._id.toString().slice(-8) %> | <strong>User:</strong> <%= order.user ? order.user.name : '-' %> | <strong>Total:</strong> Rs <%= order.totalAmount.toFixed(2) %></p>
+        <p><strong>Current status:</strong> <%= order.orderStatus %></p>
+        <form action="/restaurants/<%= restaurant._id %>/orders/<%= order._id %>/status" method="POST" class="owner-form" style="max-width:320px;">
+          <select name="orderStatus">
+            <% statuses.forEach(s => { %><option value="<%= s %>" <%= order.orderStatus === s ? 'selected' : '' %>><%= s %></option><% }) %>
+          </select>
+          <button class="owner-btn primary" type="submit">Update Status</button>
+        </form>
+      </div>
+    <% }) %>
+  </main>
+</div>
+</body></html>
+

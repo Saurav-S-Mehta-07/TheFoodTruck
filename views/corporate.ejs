@@ -29,9 +29,21 @@
           <a href="/blogs">Blogs</a>
         </div>
         <div class="header-icons">
-          <button class="header-order-btn">order now</button>
-          <p><i class="fa-solid fa-cart-shopping"></i></p>
-          <p>Sign In</p>
+          <a href="/cart" style="color: inherit; position:relative; display:inline-flex; align-items:center;">
+  <i class="fa-solid fa-cart-shopping"></i>
+  <% if (typeof cartItemCount !== 'undefined' && cartItemCount > 0) { %>
+    <span style="position:absolute; top:-8px; right:-10px; min-width:16px; height:16px; border-radius:999px; background:#ef4444; color:#fff; font-size:10px; line-height:16px; text-align:center; padding:0 4px; font-weight:700;"><%= cartItemCount %></span>
+  <% } %>
+</a>
+          <% if (currentUser) { %>
+            <a href="/orders" style="text-decoration:none; color:inherit;">Orders</a>
+            <form action="/auth/logout" method="POST" style="display:inline; margin:0;">
+              <button type="submit" class="header-order-btn" style="width:auto; height:auto; padding:8px 12px;">Logout</button>
+            </form>
+          <% } else { %>
+            <a href="/auth/login" style="text-decoration:none; color:inherit;">Log In</a>
+            <a href="/auth/signup" style="text-decoration:none; color:inherit;">Sign Up</a>
+          <% } %>
         </div>
       </div>
 
@@ -167,3 +179,8 @@
     </div>
   </body>
 </html>
+
+
+
+
+

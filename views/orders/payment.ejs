@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Payment - The Food Truck</title>
+  <link rel="stylesheet" href="/css/orders.css">
+</head>
+<body>
+    <%- include("../partials/userHeader") %>
+    <%- include("../partials/flashMessages") %>
+  <div class="checkout-container">
+    <h1>Complete Payment</h1>
+
+    <div class="checkout-content">
+      <div class="order-summary">
+        <h2>Order #<%= order._id.toString().slice(-8) %></h2>
+        <p><strong>Total Amount:</strong> Rs <%= order.totalAmount.toFixed(2) %></p>
+        <p><strong>Payment Method:</strong> Online</p>
+        <p><strong>Status:</strong> <%= order.paymentStatus %></p>
+      </div>
+
+      <div class="checkout-form">
+        <h2>Payment Gateway (Demo)</h2>
+        <p>This demo confirms payment in one click.</p>
+        <form action="/orders/<%= order._id %>/payment" method="POST">
+          <button type="submit" class="btn btn-primary">Pay Now</button>
+          <a href="/orders/<%= order._id %>" class="btn btn-secondary">Pay Later</a>
+        </form>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
+
+

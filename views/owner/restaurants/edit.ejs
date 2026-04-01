@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" /><title>Edit Restaurant</title><link rel="stylesheet" href="/css/owner.css" /></head>
+<body>
+<%- include("../../partials/ownerHeader") %>
+<%- include("../../partials/flashMessages") %>
+<div class="owner-shell">
+  <%- include("../partials/sidebar", { restaurant }) %>
+  <main class="owner-main">
+    <h1>Edit Restaurant</h1>
+    <form class="owner-form" action="/restaurants/<%= restaurant._id %>/edit" method="POST">
+      <input name="name" value="<%= restaurant.name %>" required />
+      <textarea name="description"><%= restaurant.description || '' %></textarea>
+      <div class="owner-row">
+        <input name="phone" value="<%= restaurant.phone || '' %>" required />
+        <input name="email" type="email" value="<%= restaurant.email || '' %>" />
+      </div>
+      <input name="imageUrl" value="<%= restaurant.imageUrl || '' %>" placeholder="Image URL" />
+      <input name="cuisine" value="<%= (restaurant.cuisine || []).join(', ') %>" placeholder="Cuisine" />
+      <div class="owner-row">
+        <input name="street" value="<%= restaurant.address?.street || '' %>" required />
+        <input name="city" value="<%= restaurant.address?.city || '' %>" required />
+      </div>
+      <div class="owner-row">
+        <input name="state" value="<%= restaurant.address?.state || '' %>" required />
+        <input name="pincode" value="<%= restaurant.address?.pincode || '' %>" required />
+      </div>
+      <label><input type="checkbox" name="isActive" <%= restaurant.isActive ? 'checked' : '' %> /> Active</label>
+      <button class="owner-btn primary" type="submit">Save</button>
+      <a class="owner-btn" href="/restaurants">Back</a>
+    </form>
+  </main>
+</div>
+</body></html>
+

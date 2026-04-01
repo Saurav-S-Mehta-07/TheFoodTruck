@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Details - The Food Truck</title>
+    <link rel="stylesheet" href="/css/orders.css">
+</head>
+<body>
+    <%- include("../partials/userHeader") %>
+    <%- include("../partials/flashMessages") %>
+    <div class="order-details-container">
+        <h1>Order Details</h1>
+
+        <div class="order-info">
+            <div class="info-section">
+                <h2>Order #<%= order._id.toString().slice(-8) %></h2>
+                <p><strong>Status:</strong> <span class="status-<%= order.orderStatus.toLowerCase().replace(' ', '-') %>"><%= order.orderStatus %></span></p>
+                <% if (order.restaurant) { %><p><strong>Restaurant:</strong> <%= order.restaurant.name %></p><% } %>
+                <% if (order.mealType) { %><p><strong>Meal Type:</strong> <%= order.mealType %></p><% } %>
+                <% if (order.scheduledFor) { %><p><strong>Scheduled For:</strong> <%= new Date(order.scheduledFor).toLocaleString() %></p><% } %>
+                <p><strong>Date:</strong> <%= new Date(order.createdAt).toLocaleDateString() %></p>
+                <p><strong>Payment:</strong> <%= order.paymentMethod.toUpperCase() %></p>
+                <p><strong>Payment Status:</strong> <%= order.paymentStatus %></p>
+                <% if (order.estimatedDeliveryTime) { %>
+                    <p><strong>Estimated Delivery:</strong> <%= new Date(order.estimatedDeliveryTime).toLocaleString() %></p>
+                <% } %>
+            </div>
+
+            <div class="info-section">
+                <h3>Delivery Address</h3>
+                <p><%= order.deliveryAddress.street %></p>
+                <p><%= order.deliveryAddress.city %>, <%= order.deliveryAddress.state %> <%= order.deliveryAddress.pincode %></p>
+                <% if (order.specialInstructions) { %>
+                    <p><strong>Special Instructions:</strong> <%= order.specialInstructions %></p>
+                <% } %>
+            </div>
+        </div>
+
+        <div class="order-items">
+            <h3>Items Ordered</h3>
+            <% order.items.forEach(item => { %>
+                <div class="order-item">
+                    <div class="item-info">
+                        <h4><%= item.title %></h4>
+                        <p>Quantity: <%= item.quantity %></p>
+                        <% if (item.specialInstructions) { %>
+                            <p><em>Special Instructions: <%= item.specialInstructions %></em></p>
+                        <% } %>
+                        <p>Price: Rs <%= item.price %></p>
+                    </div>
+                    <div class="item-total">
+                        Rs <%= (item.price * item.quantity).toFixed(2) %>
+                    </div>
+                </div>
+            <% }); %>
+        </div>
+
+        <div class="order-total">
+            <div class="price-breakdown">
+                <div class="summary-row">
+                    <span>Subtotal:</span>
+                    <span>Rs <%= order.subtotal.toFixed(2) %></span>
+                </div>
+                <% if (order.discountAmount > 0) { %>
+                    <div class="summary-row discount">
+                        <span>Discount:</span>
+                        <span>-Rs <%= order.discountAmount.toFixed(2) %></span>
+                    </div>
+                <% } %>
+                <div class="summary-row">
+                    <span>Tax (GST 18%):</span>
+                    <span>Rs <%= order.taxAmount.toFixed(2) %></span>
+                </div>
+                <div class="summary-row total">
+                    <strong>Total Amount: Rs <%= order.totalAmount.toFixed(2) %></strong>
+                </div>
+            </div>
+        </div>
+
+        <div class="order-actions">
+            <a href="/orders" class="btn btn-secondary">Back to Orders</a>
+            <% if (order.paymentMethod === 'online' && order.paymentStatus !== 'paid') { %>
+                <a href="/orders/<%= order._id %>/payment" class="btn btn-primary">Complete Payment</a>
+            <% } %>
+            <a href="/menu" class="btn btn-primary">Order Again</a>
+        </div>
+    </div>
+</body>
+</html>

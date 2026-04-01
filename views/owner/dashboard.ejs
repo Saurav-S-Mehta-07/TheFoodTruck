@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Owner Dashboard</title>
+  <link rel="stylesheet" href="/css/owner.css" />
+  <style>
+    .mini-bars { display: grid; gap: 8px; }
+    .mini-bar-row { display: grid; grid-template-columns: 36px 1fr 90px; align-items: center; gap: 10px; }
+    .mini-track { background: #e5e7eb; border-radius: 999px; height: 10px; overflow: hidden; }
+    .mini-fill { background: #16a34a; height: 100%; }
+  </style>
+</head>
+<body>
+  <%- include("../partials/ownerHeader") %>
+  <%- include("../partials/flashMessages") %>
+
+  <div class="owner-shell">
+    <%- include("./partials/sidebar") %>
+
+    <main class="owner-main">
+      <h1>Owner Dashboard</h1>
+      <div class="owner-grid">
+        <div class="owner-card"><h3><%= stats.totalRestaurants %></h3><p>Restaurants</p></div>
+        <div class="owner-card"><h3><%= stats.totalMenuItems %></h3><p>Menu Items</p></div>
+        <div class="owner-card"><h3><%= stats.totalOrders %></h3><p>Total Orders</p></div>
+        <div class="owner-card"><h3><%= stats.pendingOrders %></h3><p>Pending Orders</p></div>
+        <div class="owner-card"><h3>Rs <%= Number(stats.thisMonthIncome || 0).toFixed(2) %></h3><p>This Month Income</p></div>
+        <div class="owner-card"><h3>Rs <%= Number(stats.totalIncome || 0).toFixed(2) %></h3><p><%= currentYear %> Income</p></div>
+      </div>
+
+      <div class="owner-card">
+        <h2>Monthly Income (<%= currentYear %>)</h2>
+        <% const maxIncome = Math.max(1, ...monthlyIncome.map(m => m.income)); %>
+        <div class="mini-bars">
+          <% monthlyIncome.forEach(m => { %>
+            <div class="mini-bar-row">
+              <span><%= m.month %></span>
+              <div class="mini-track"><div class="mini-fill" style="width:<%= Math.round((m.income / maxIncome) * 100) %>%;"></div></div>
+              <strong>Rs <%= Number(m.income || 0).toFixed(0) %></strong>
+            </div>
+          <% }) %>
+        </div>
+      </div>
+
+      <div class="owner-card">
+        <h2>Items Visible To Users</h2>
+        <% if (!ownerMenuItems.length) { %>
+          <p>No active menu items yet.</p>
+        <% } else { %>
+          <table class="owner-table">
+            <thead><tr><th>Item</th><th>Restaurant</th><th>Price</th><th>Orders</th></tr></thead>
+            <tbody>
+              <% ownerMenuItems.forEach(item => { %>
+                <tr>
+                  <td><%= item.title %></td>
+                  <td><%= item.restaurant ? item.restaurant.name : '-' %></td>
+                  <td>Rs <%= Number(item.price || 0).toFixed(2) %></td>
+                  <td><%= item.orderCount || 0 %></td>
+                </tr>
+              <% }) %>
+            </tbody>
+          </table>
+        <% } %>
+      </div>
+
+      <div class="owner-card">
+        <h2>Recent Orders</h2>
+        <% if (!recentOrders.length) { %>
+          <p>No orders yet.</p>
+        <% } else { %>
+          <table class="owner-table">
+            <thead>
+              <tr><th>Order</th><th>Restaurant</th><th>User</th><th>Status</th><th>Total</th></tr>
+            </thead>
+            <tbody>
+              <% recentOrders.forEach(o => { %>
+                <tr>
+                  <td>#<%= o._id.toString().slice(-6) %></td>
+                  <td><%= o.restaurant ? o.restaurant.name : '-' %></td>
+                  <td><%= o.user ? o.user.name : '-' %></td>
+                  <td><%= o.orderStatus %></td>
+                  <td>Rs <%= Number(o.totalAmount || 0).toFixed(2) %></td>
+                </tr>
+              <% }) %>
+            </tbody>
+          </table>
+        <% } %>
+      </div>
+
+      <div class="owner-card">
+        <h2>My Restaurants</h2>
+        <% if (!restaurants.length) { %>
+          <p>No restaurant yet.</p>
+          <a class="owner-btn primary" href="/restaurants/create">Create Restaurant</a>
+        <% } else { %>
+          <% restaurants.forEach(r => { %>
+            <p>
+              <strong><%= r.name %></strong>
+              (<%= r.isActive ? 'Active' : 'Inactive' %>)
+              - <a class="owner-btn" href="/restaurants/<%= r._id %>/menu">Menu</a>
+              <a class="owner-btn" href="/restaurants/<%= r._id %>/orders">Orders</a>
+            </p>
+          <% }) %>
+        <% } %>
+      </div>
+    </main>
+  </div>
+</body>
+</html>
+

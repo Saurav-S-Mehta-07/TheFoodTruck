@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up - The Food Truck</title>
+    <link rel="stylesheet" href="/css/auth.css">
+</head>
+<body>
+    <%- include("../partials/userHeader") %>
+    <%- include("../partials/flashMessages") %>
+<div class="auth-container">
+        <div class="auth-form">
+            <h1>Sign Up</h1>
+            <form action="/auth/signup" method="POST">
+                <div class="form-group">
+                    <label for="name">Full Name</label>
+                    <input type="text" id="name" name="name" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" required minlength="6">
+                </div>
+
+                <div class="form-group">
+                    <label for="confirmPassword">Confirm Password</label>
+                    <input type="password" id="confirmPassword" name="confirmPassword" required minlength="6">
+                </div>
+
+                <div class="form-group">
+                    <label for="role">Sign Up As</label>
+                    <select id="role" name="role" required>
+                        <option value="user" <%= defaultRole === "user" ? "selected" : "" %>>User</option>
+                        <option value="owner" <%= defaultRole === "owner" ? "selected" : "" %>>Restaurant Owner</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="btn btn-primary">Sign Up</button>
+            </form>
+
+            <p class="auth-link">Already have an account? <a href="/auth/login">Log In</a></p>
+        </div>
+    </div>
+</body>
+</html>
+

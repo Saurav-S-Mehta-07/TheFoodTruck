@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Cart - The Food Truck</title>
+    <link rel="stylesheet" href="/css/cart.css">
+</head>
+<body>
+    <%- include("../partials/userHeader") %>
+    <%- include("../partials/flashMessages") %>
+    <div class="cart-container">
+        <h1>Your Cart</h1>
+
+        <% if (cart.items.length === 0) { %>
+            <div class="empty-cart">
+                <h2>Your cart is empty</h2>
+                <p>Add some delicious items from our menu!</p>
+                <a href="/menu" class="btn btn-primary">Browse Menu</a>
+            </div>
+        <% } else { %>
+            <div class="cart-items">
+                <% cart.items.forEach(item => { %>
+                    <% if (item.menuItem) { %>
+                        <div class="cart-item">
+                            <div class="item-image">
+                                <% if (item.menuItem.imageUrl) { %>
+                                    <img src="<%= item.menuItem.imageUrl %>" alt="<%= item.menuItem.title %>">
+                                <% } else { %>
+                                    <div class="no-image">No Image</div>
+                                <% } %>
+                            </div>
+                            <div class="item-details">
+                                <h3><%= item.menuItem.title %></h3>
+                                <p><%= item.menuItem.description %></p>
+                                <p class="price">Rs <%= item.menuItem.price %></p>
+                                <p><strong>Customization:</strong> <%= item.transientCustomization || 'Default' %></p>
+                                <div class="special-instructions">
+                                    <label for="instructions-<%= item.menuItem._id %>">Special Instructions:</label>
+                                    <textarea name="specialInstructions" id="instructions-<%= item.menuItem._id %>" rows="2" maxlength="500" placeholder="Any special requests..."><%= item.specialInstructions || '' %></textarea>
+                                </div>
+                            </div>
+                            <div class="item-quantity">
+                                <form action="/cart/update" method="POST" class="quantity-form">
+                                    <input type="hidden" name="menuItemId" value="<%= item.menuItem._id %>">
+                                    <input type="hidden" name="specialInstructions" id="hidden-instructions-<%= item.menuItem._id %>">
+                                    <button type="button" class="qty-btn" onclick="changeQuantity('<%= item.menuItem._id %>', -1)">-</button>
+                                    <input type="number" name="quantity" value="<%= item.quantity %>" min="1" class="qty-input" id="qty-<%= item.menuItem._id %>">
+                                    <button type="button" class="qty-btn" onclick="changeQuantity('<%= item.menuItem._id %>', 1)">+</button>
+
+                                    <select name="customizationOption" id="customization-<%= item.menuItem._id %>" style="margin-top:8px; width:100%;">
+                                        <% customizationOptions.forEach(opt => { %>
+                                            <option value="<%= opt %>" <%= (item.transientCustomization || 'Default') === opt ? 'selected' : '' %>><%= opt %></option>
+                                        <% }); %>
+                                    </select>
+
+                                    <button type="submit" class="update-btn">Update</button>
+                                </form>
+                            </div>
+                            <div class="item-total">
+                                <p>Rs <%= (item.menuItem.price * item.quantity).toFixed(2) %></p>
+                                <form action="/cart/remove/<%= item.menuItem._id %>?_method=DELETE" method="POST">
+                                    <button type="submit" class="remove-btn">Remove</button>
+                                </form>
+                            </div>
+                        </div>
+                    <% } %>
+                <% }); %>
+            </div>
+
+            <div class="cart-summary">
+                <div class="coupon-section">
+                    <h3>Apply Coupon</h3>
+                    <form action="/cart/apply-coupon" method="POST" id="coupon-form">
+                        <div class="coupon-input-group">
+                            <input type="text" name="couponCode" placeholder="Enter coupon code" id="coupon-code" value="<%= cart.coupon ? cart.coupon.code : '' %>">
+                            <button type="submit" class="btn btn-secondary">Apply</button>
+                        </div>
+                    </form>
+                    <% if (cart.coupon) { %>
+                        <p class="coupon-applied">Coupon "<%= cart.coupon.code %>" applied: <%= cart.coupon.description %></p>
+                    <% } %>
+                </div>
+
+                <div class="price-breakdown">
+                    <div class="summary-row">
+                        <span>Subtotal:</span>
+                        <span>Rs <%= (cart.subtotal || 0).toFixed(2) %></span>
+                    </div>
+                    <% if (cart.discountAmount > 0) { %>
+                        <div class="summary-row discount">
+                            <span>Discount (<%= cart.coupon.code %>):</span>
+                            <span>-Rs <%= cart.discountAmount.toFixed(2) %></span>
+                        </div>
+                    <% } %>
+                    <div class="summary-row">
+                        <span>Tax (GST 18%):</span>
+                        <span>Rs <%= ((cart.subtotal - cart.discountAmount) * 0.18).toFixed(2) %></span>
+                    </div>
+                    <div class="summary-row total">
+                        <span><strong>Total:</strong></span>
+                        <span><strong>Rs <%= (cart.finalPrice + ((cart.subtotal - cart.discountAmount) * 0.18)).toFixed(2) %></strong></span>
+                    </div>
+                </div>
+
+                <div class="cart-actions">
+                    <form action="/cart/clear" method="POST">
+                        <button type="submit" class="btn btn-secondary">Clear Cart</button>
+                    </form>
+                    <a href="/menu" class="btn btn-secondary">Back to Menu</a>
+                    <a href="/orders/checkout" class="btn btn-primary">Place Individual Orders</a>
+                    <a href="/orders/bulk" class="btn btn-secondary">Bulk Order (Single Restaurant)</a>
+                </div>
+            </div>
+        <% } %>
+    </div>
+
+    <script>
+        function changeQuantity(menuItemId, change) {
+            const input = document.getElementById(`qty-${menuItemId}`);
+            let currentValue = parseInt(input.value);
+            let newValue = currentValue + change;
+            if (newValue >= 1) {
+                input.value = newValue;
+            }
+        }
+
+        document.querySelectorAll('.quantity-form').forEach((form) => {
+            form.addEventListener('submit', () => {
+                const menuItemId = form.querySelector('input[name="menuItemId"]').value;
+                const textarea = document.getElementById(`instructions-${menuItemId}`);
+                const hidden = document.getElementById(`hidden-instructions-${menuItemId}`);
+                if (textarea && hidden) {
+                    hidden.value = textarea.value;
+                }
+            });
+        });
+    </script>
+</body>
+</html>
+
+
+

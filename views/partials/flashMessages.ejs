@@ -1,0 +1,98 @@
+<style>
+  .flash-toast-wrap {
+    position: fixed;
+    right: 16px;
+    bottom: 16px;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: min(360px, calc(100vw - 24px));
+  }
+
+  .flash-toast {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 12px 14px;
+    border-radius: 10px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.16);
+    color: #fff;
+    opacity: 1;
+    transform: translateY(0);
+    transition: opacity 0.25s ease, transform 0.25s ease;
+  }
+
+  .flash-toast.hide {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+
+  .flash-toast.success {
+    background: #16a34a;
+  }
+
+  .flash-toast.error {
+    background: #dc2626;
+  }
+
+  .flash-toast button {
+    border: none;
+    background: transparent;
+    color: #fff;
+    font-size: 20px;
+    line-height: 1;
+    cursor: pointer;
+    padding: 0;
+  }
+</style>
+
+<div class="flash-toast-wrap" id="flash-toast-wrap">
+  <% if (success && success.length > 0) { %>
+    <div class="flash-toast success" data-flash-toast>
+      <span><%= success[0] %></span>
+      <button type="button" aria-label="Close" onclick="closeFlashToast(this)">&times;</button>
+    </div>
+  <% } %>
+
+  <% if (error && error.length > 0) { %>
+    <div class="flash-toast error" data-flash-toast>
+      <span><%= error[0] %></span>
+      <button type="button" aria-label="Close" onclick="closeFlashToast(this)">&times;</button>
+    </div>
+  <% } %>
+
+  <% if (messages && messages.success && messages.success.length > 0) { %>
+    <div class="flash-toast success" data-flash-toast>
+      <span><%= messages.success[0] %></span>
+      <button type="button" aria-label="Close" onclick="closeFlashToast(this)">&times;</button>
+    </div>
+  <% } %>
+
+  <% if (messages && messages.error && messages.error.length > 0) { %>
+    <div class="flash-toast error" data-flash-toast>
+      <span><%= messages.error[0] %></span>
+      <button type="button" aria-label="Close" onclick="closeFlashToast(this)">&times;</button>
+    </div>
+  <% } %>
+</div>
+
+<script>
+  function closeFlashToast(btn) {
+    const toast = btn.closest('[data-flash-toast]');
+    if (!toast) return;
+    toast.classList.add('hide');
+    setTimeout(() => toast.remove(), 250);
+  }
+
+  (function autoHideFlashToasts() {
+    const toasts = document.querySelectorAll('[data-flash-toast]');
+    toasts.forEach((toast) => {
+      setTimeout(() => {
+        toast.classList.add('hide');
+        setTimeout(() => toast.remove(), 250);
+      }, 5000);
+    });
+  })();
+</script>

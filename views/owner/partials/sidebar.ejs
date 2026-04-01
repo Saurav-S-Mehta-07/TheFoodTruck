@@ -1,0 +1,10 @@
+<aside class="owner-sidebar">
+  <h2>Owner Panel</h2>
+  <a href="/restaurants/dashboard">Dashboard</a>
+  <a href="/restaurants">My Restaurants</a>
+  <% if (typeof restaurant !== 'undefined' && restaurant) { %>
+    <a href="/restaurants/<%= restaurant._id %>/menu">Menu</a>
+    <a href="/restaurants/<%= restaurant._id %>/orders">Orders</a>
+    <a href="/restaurants/<%= restaurant._id %>/coupons">Coupons</a>
+  <% } %>
+</aside>

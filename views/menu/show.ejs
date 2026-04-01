@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= menuItem.title %> - The Food Truck</title>
+  <link rel="stylesheet" href="/css/menu.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
+</head>
+<body>
+  <%- include("../partials/userHeader") %>
+  <%- include("../partials/flashMessages") %>
+
+  <div class="menu-page">
+    <div class="menu-content">
+      <div class="item-detail-container">
+        <div class="item-detail">
+          <div class="item-image-large">
+            <% if (menuItem.imageUrl) { %><img src="<%= menuItem.imageUrl %>" alt="<%= menuItem.title %>"><% } else { %><div class="no-image">No Image</div><% } %>
+            <% if (menuItem.foodType === 'veg') { %><span class="veg-indicator">Veg</span><% } else { %><span class="non-veg-indicator">Non-Veg</span><% } %>
+          </div>
+
+          <div class="item-info">
+            <h1><%= menuItem.title %></h1>
+            <div class="rating">
+              <% for (let i = 1; i <= 5; i++) { %>
+                <% if (i <= Math.floor(averageRating)) { %><i class="fas fa-star"></i><% } else if (i - 0.5 <= averageRating) { %><i class="fas fa-star-half-alt"></i><% } else { %><i class="far fa-star"></i><% } %>
+              <% } %>
+              <span>(<%= averageRating %>/5 from <%= reviews.length %> reviews)</span>
+            </div>
+
+            <p class="description"><%= menuItem.description %></p>
+
+            <div class="item-meta">
+              <% if (menuItem.calories) { %><span><i class="fas fa-fire"></i> <%= menuItem.calories %> cal</span><% } %>
+              <% if (menuItem.tags && menuItem.tags.length > 0) { %><span><i class="fas fa-tags"></i> <%= menuItem.tags.join(', ') %></span><% } %>
+            </div>
+
+            <div class="price-section">
+              <span class="price">Rs <%= menuItem.price %></span>
+              <% if (menuItem.originalPrice && menuItem.originalPrice > menuItem.price) { %><span class="original-price">Rs <%= menuItem.originalPrice %></span><% } %>
+            </div>
+
+            <% if (currentUser) { %>
+              <form action="/orders/direct" method="POST" class="add-to-cart-form" style="margin-top: 16px;">
+                <input type="hidden" name="menuItemId" value="<%= menuItem._id %>">
+                <div class="quantity-selector">
+                  <label for="orderQuantity">Quantity:</label>
+                  <input type="number" name="quantity" id="orderQuantity" value="1" min="1" max="10" required>
+                </div>
+                
+                <div class="quantity-selector">
+                  <label for="orderCustomizationOption">Customization:</label>
+                  <select name="customizationOption" id="orderCustomizationOption" required>
+                    <option value="Default" selected>Default</option>
+                    <option value="Less Spicy">Less Spicy</option>
+                    <option value="Extra Spicy">Extra Spicy</option>
+                    <option value="No Onion">No Onion</option>
+                    <option value="Extra Cheese">Extra Cheese</option>
+                  </select>
+                </div>
+                
+                <div class="special-instructions">
+                  <label for="orderSpecialInstructions">Special Instructions:</label>
+                  <textarea name="specialInstructions" id="orderSpecialInstructions" rows="2" placeholder="Any special requests..."></textarea>
+                </div>
+
+                <div class="quantity-selector">
+                  <label for="paymentMethod">Payment Method:</label>
+                  <select name="paymentMethod" id="paymentMethod" required>
+                    <option value="cod">Cash on Delivery</option>
+                    <option value="online">Online Payment</option>
+                  </select>
+                </div>
+
+                <div class="quantity-selector">
+                  <label for="street">Street Address:</label>
+                  <input type="text" name="street" id="street" value="<%= currentUser && currentUser.address ? currentUser.address.street || '' : '' %>" required>
+                </div>
+
+                <div class="quantity-selector">
+                  <label for="city">City:</label>
+                  <input type="text" name="city" id="city" value="<%= currentUser && currentUser.address ? currentUser.address.city || '' : '' %>" required>
+                </div>
+
+                <div class="quantity-selector">
+                  <label for="state">State:</label>
+                  <input type="text" name="state" id="state" value="<%= currentUser && currentUser.address ? currentUser.address.state || '' : '' %>" required>
+                </div>
+
+                <div class="quantity-selector">
+                  <label for="pincode">Pincode:</label>
+                  <input type="text" name="pincode" id="pincode" value="<%= currentUser && currentUser.address ? currentUser.address.pincode || '' : '' %>" required>
+                </div>
+
+                <div class="special-instructions">
+                  <label for="orderInstructions">Order Instructions (Optional):</label>
+                  <textarea name="specialInstructions" id="orderInstructions" rows="2" placeholder="Delivery instructions..."></textarea>
+                </div>
+
+                <button type="submit" class="add-to-cart-btn" style="background: #059669;">Order Now</button>
+              </form>
+            <% } %>
+          </div>
+        </div>
+
+        <div class="reviews-section">
+          <h2>Customer Reviews</h2>
+          <% if (currentUser && canReview) { %>
+            <form action="/menu/<%= menuItem._id %>/reviews" method="POST" class="add-to-cart-form" style="margin-bottom: 20px;">
+              <div class="quantity-selector">
+                <label for="rating">Your Rating:</label>
+                <select id="rating" name="rating" required>
+                  <option value="">Select</option>
+                  <option value="5" <%= userReview && userReview.rating === 5 ? 'selected' : '' %>>5 - Excellent</option>
+                  <option value="4" <%= userReview && userReview.rating === 4 ? 'selected' : '' %>>4 - Very Good</option>
+                  <option value="3" <%= userReview && userReview.rating === 3 ? 'selected' : '' %>>3 - Good</option>
+                  <option value="2" <%= userReview && userReview.rating === 2 ? 'selected' : '' %>>2 - Fair</option>
+                  <option value="1" <%= userReview && userReview.rating === 1 ? 'selected' : '' %>>1 - Poor</option>
+                </select>
+              </div>
+              <div class="special-instructions">
+                <label for="comment">Your Review:</label>
+                <textarea id="comment" name="comment" rows="3" maxlength="500" placeholder="Share your experience"><%= userReview ? userReview.comment : '' %></textarea>
+              </div>
+              <button type="submit" class="add-to-cart-btn"><%= userReview ? 'Update Review' : 'Submit Review' %></button>
+            </form>
+          <% } else if (currentUser) { %>
+            <p>You can review this item after ordering it.</p>
+          <% } %>
+
+          <% if (reviews.length === 0) { %>
+            <p>No reviews yet. Be the first to review this item!</p>
+          <% } else { %>
+            <div class="reviews-list">
+              <% reviews.forEach(review => { %>
+                <div class="review">
+                  <div class="review-header">
+                    <strong><%= review.user.name %></strong>
+                    <div class="review-rating">
+                      <% for (let i = 1; i <= 5; i++) { %>
+                        <% if (i <= review.rating) { %><i class="fas fa-star"></i><% } else { %><i class="far fa-star"></i><% } %>
+                      <% } %>
+                    </div>
+                    <span class="review-date"><%= new Date(review.createdAt).toLocaleDateString() %></span>
+                  </div>
+                  <% if (review.comment) { %><p class="review-comment"><%= review.comment %></p><% } %>
+                </div>
+              <% }); %>
+            </div>
+          <% } %>
+        </div>
+
+        <% if (relatedItems && relatedItems.length > 0) { %>
+          <div class="reviews-section">
+            <h2>Related Items</h2>
+            <div class="menu-grid">
+              <% relatedItems.forEach(item => { %>
+                <div class="menu-item">
+                  <div class="item-image">
+                    <% if (item.imageUrl) { %><img src="<%= item.imageUrl %>" alt="<%= item.title %>"><% } else { %><div class="no-image">No Image</div><% } %>
+                  </div>
+                  <div class="item-content">
+                    <h3><a href="/menu/<%= item._id %>"><%= item.title %></a></h3>
+                    <p><%= item.description %></p>
+                    <div class="item-footer">
+                      <span class="price">Rs <%= item.price %></span>
+                      <a href="/menu/<%= item._id %>" class="add-to-cart-btn">View</a>
+                    </div>
+                  </div>
+                </div>
+              <% }); %>
+            </div>
+          </div>
+        <% } %>
+
+        <div class="back-to-menu">
+          <a href="/menu" class="btn">&larr; Back to Menu</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const quantityInput = document.getElementById('quantity');
+    if (quantityInput) {
+      quantityInput.addEventListener('input', function() {
+        if (this.value < 1) this.value = 1;
+        if (this.value > 10) this.value = 10;
+      });
+    }
+  </script>
+</body>
+</html>
+
+
+
+
+
+
+
+
