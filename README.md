@@ -14,7 +14,7 @@ A production-ready food delivery website built with Node.js, Express.js, MongoDB
 - **Security**: Password hashing, input validation, authentication middleware
 
 <img src="images/image1.png" width="300" height="200" style="display:'inline'">
-<img src="images/image2.png" width="300" height="200">
+<img src="images/image2.png" width="300" height="200" style="display:'inline'">
 <img src="images/image3.png" width="300" height="200">
 <img src="images/image4.png" width="300" height="200">
 <img src="images/image5.png" width="300" height="200">
