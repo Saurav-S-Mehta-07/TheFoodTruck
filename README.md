@@ -13,6 +13,10 @@ A production-ready food delivery website built with Node.js, Express.js, MongoDB
 - **Admin Dashboard**: Manage menu items, view orders, user management
 - **Security**: Password hashing, input validation, authentication middleware
 
+![Image 1](images/image1.png)
+
+![Image 2](images/image2.jpg)
+
 ## Tech Stack
 
 - **Backend**: Node.js, Express.js
