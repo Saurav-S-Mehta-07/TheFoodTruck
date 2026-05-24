@@ -11,8 +11,11 @@ A production-ready food delivery website built with Node.js, Express.js, MongoDB
 - **Order Management**: Complete order lifecycle with history
 - **Recommendation System**: Basic recommendations based on user order history
 - **Admin Dashboard**: Manage menu items, view orders, user management
-- **Responsive Design**: Mobile-friendly UI
 - **Security**: Password hashing, input validation, authentication middleware
+
+![Image 1](images/image1.png)
+
+![Image 2](images/image2.jpg)
 
 ## Tech Stack
 
@@ -174,6 +177,3 @@ After seeding the database, you can create an admin user by updating a user's ro
 4. Test thoroughly
 5. Submit a pull request
 
-## License
-
-This project is licensed under the MIT License.
