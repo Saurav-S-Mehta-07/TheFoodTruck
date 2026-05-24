@@ -11,7 +11,6 @@ A production-ready food delivery website built with Node.js, Express.js, MongoDB
 - **Order Management**: Complete order lifecycle with history
 - **Recommendation System**: Basic recommendations based on user order history
 - **Admin Dashboard**: Manage menu items, view orders, user management
-- **Responsive Design**: Mobile-friendly UI
 - **Security**: Password hashing, input validation, authentication middleware
 
 ## Tech Stack
