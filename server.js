@@ -10,7 +10,10 @@ const flash = require("connect-flash");
 const methodOverride = require("method-override");
 const path = require("path");
 
-const { notFoundHandler, globalErrorHandler } = require("./middleware/errorHandler");
+const {
+  notFoundHandler,
+  globalErrorHandler,
+} = require("./middleware/errorHandler");
 const User = require("./models/Users");
 const Cart = require("./models/Cart");
 
@@ -51,7 +54,7 @@ app.use(
     cookie: {
       maxAge: 1000 * 60 * 60 * 24,
     },
-  })
+  }),
 );
 
 app.use(passport.initialize());
@@ -63,17 +66,19 @@ passport.use(
     async (email, password, done) => {
       try {
         const user = await User.findOne({ email });
-        if (!user) return done(null, false, { message: "Invalid email or password" });
+        if (!user)
+          return done(null, false, { message: "Invalid email or password" });
 
         const isValid = await user.comparePassword(password);
-        if (!isValid) return done(null, false, { message: "Invalid email or password" });
+        if (!isValid)
+          return done(null, false, { message: "Invalid email or password" });
 
         return done(null, user);
       } catch (err) {
         return done(err);
       }
-    }
-  )
+    },
+  ),
 );
 
 passport.serializeUser((user, done) => done(null, user.id));
@@ -102,8 +107,12 @@ app.use(async (req, res, next) => {
       return next();
     }
 
-    const cart = await Cart.findOne({ user: req.user._id }).select("items.quantity");
-    res.locals.cartItemCount = cart ? cart.items.reduce((sum, item) => sum + (item.quantity || 0), 0) : 0;
+    const cart = await Cart.findOne({ user: req.user._id }).select(
+      "items.quantity",
+    );
+    res.locals.cartItemCount = cart
+      ? cart.items.reduce((sum, item) => sum + (item.quantity || 0), 0)
+      : 0;
     return next();
   } catch (err) {
     console.error("Cart count error:", err);
@@ -111,7 +120,6 @@ app.use(async (req, res, next) => {
     return next();
   }
 });
-
 
 app.get("/", (req, res) => res.redirect("/home"));
 app.get("/home", (req, res) => res.render("index"));

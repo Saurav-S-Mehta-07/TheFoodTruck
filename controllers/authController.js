@@ -7,7 +7,9 @@ module.exports = {
   // Render signup form
   getSignup: (req, res) => {
     const requestedRole = req.query.role;
-    const defaultRole = ALLOWED_SIGNUP_ROLES.includes(requestedRole) ? requestedRole : "user";
+    const defaultRole = ALLOWED_SIGNUP_ROLES.includes(requestedRole)
+      ? requestedRole
+      : "user";
     res.render("auth/signup", { messages: req.flash(), defaultRole });
   },
 
@@ -60,7 +62,10 @@ module.exports = {
       if (err) return next(err);
 
       if (!user) {
-        req.flash("error", (info && info.message) || "Invalid email or password");
+        req.flash(
+          "error",
+          (info && info.message) || "Invalid email or password",
+        );
         return res.redirect("/auth/login");
       }
 
@@ -68,7 +73,8 @@ module.exports = {
         if (loginErr) return next(loginErr);
 
         if (user.role === "admin") return res.redirect("/admin");
-        if (user.role === "owner") return res.redirect("/restaurants/dashboard");
+        if (user.role === "owner")
+          return res.redirect("/restaurants/dashboard");
         return res.redirect("/home");
       });
     })(req, res, next);
@@ -85,5 +91,5 @@ module.exports = {
       }
       res.redirect("/home");
     });
-  }
+  },
 };

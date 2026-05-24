@@ -15,7 +15,10 @@ const storage = multer.diskStorage({
   destination: (req, file, cb) => cb(null, uploadDir),
   filename: (req, file, cb) => {
     const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
-    cb(null, file.fieldname + "-" + uniqueSuffix + path.extname(file.originalname));
+    cb(
+      null,
+      file.fieldname + "-" + uniqueSuffix + path.extname(file.originalname),
+    );
   },
 });
 
@@ -28,7 +31,13 @@ const upload = multer({
   },
 });
 
-const ORDER_STATUSES = ["Placed", "Confirmed", "Preparing", "Out for Delivery", "Delivered"];
+const ORDER_STATUSES = [
+  "Placed",
+  "Confirmed",
+  "Preparing",
+  "Out for Delivery",
+  "Delivered",
+];
 
 async function getOwnedRestaurant(ownerId, restaurantId) {
   return Restaurant.findOne({ _id: restaurantId, owner: ownerId });
@@ -39,7 +48,9 @@ module.exports = {
 
   getOwnerDashboard: async (req, res) => {
     try {
-      const restaurants = await Restaurant.find({ owner: req.user._id }).select("_id name isActive").lean();
+      const restaurants = await Restaurant.find({ owner: req.user._id })
+        .select("_id name isActive")
+        .lean();
       const restaurantIds = restaurants.map((r) => r._id);
 
       const stats = {
@@ -52,22 +63,48 @@ module.exports = {
         totalIncome: 0,
       };
 
-      const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+      const monthNames = [
+        "Jan",
+        "Feb",
+        "Mar",
+        "Apr",
+        "May",
+        "Jun",
+        "Jul",
+        "Aug",
+        "Sep",
+        "Oct",
+        "Nov",
+        "Dec",
+      ];
       const now = new Date();
       const currentYear = now.getFullYear();
       const startOfYear = new Date(currentYear, 0, 1);
       const startOfNextYear = new Date(currentYear + 1, 0, 1);
       const thisMonthIndex = now.getMonth();
 
-      let monthlyIncome = monthNames.map((m) => ({ month: m, income: 0, orders: 0 }));
+      let monthlyIncome = monthNames.map((m) => ({
+        month: m,
+        income: 0,
+        orders: 0,
+      }));
       let recentOrders = [];
       let ownerMenuItems = [];
 
       if (restaurantIds.length) {
-        const [totalMenuItems, totalOrders, pendingOrders, totalCoupons, monthlyAgg] = await Promise.all([
+        const [
+          totalMenuItems,
+          totalOrders,
+          pendingOrders,
+          totalCoupons,
+          monthlyAgg,
+        ] = await Promise.all([
           MenuItem.countDocuments({ restaurant: { $in: restaurantIds } }),
           Order.countDocuments({ restaurant: { $in: restaurantIds } }),
-          Order.countDocuments({ restaurant: { $in: restaurantIds }, orderStatus: { $in: ["Placed", "Confirmed", "Preparing"] } }),
+          Order.countDocuments({
+            restaurant: { $in: restaurantIds },
+            orderStatus: { $in: ["Placed", "Confirmed", "Preparing"] },
+          }),
           Coupon.countDocuments({ restaurant: { $in: restaurantIds } }),
           Order.aggregate([
             {
@@ -111,7 +148,10 @@ module.exports = {
           .limit(10)
           .lean();
 
-        ownerMenuItems = await MenuItem.find({ restaurant: { $in: restaurantIds }, isAvailable: true })
+        ownerMenuItems = await MenuItem.find({
+          restaurant: { $in: restaurantIds },
+          isAvailable: true,
+        })
           .populate("restaurant", "name")
           .sort({ orderCount: -1, createdAt: -1 })
           .limit(20)
@@ -136,8 +176,13 @@ module.exports = {
 
   getMyRestaurants: async (req, res) => {
     try {
-      const restaurants = await Restaurant.find({ owner: req.user._id }).sort({ createdAt: -1 }).lean();
-      res.render("owner/restaurants/index", { restaurants, messages: req.flash() });
+      const restaurants = await Restaurant.find({ owner: req.user._id })
+        .sort({ createdAt: -1 })
+        .lean();
+      res.render("owner/restaurants/index", {
+        restaurants,
+        messages: req.flash(),
+      });
     } catch (err) {
       console.error(err);
       req.flash("error", "Error loading restaurants");
@@ -151,7 +196,18 @@ module.exports = {
 
   postCreateRestaurant: async (req, res) => {
     try {
-      const { name, description, phone, email, street, city, state, pincode, cuisine, imageUrl } = req.body;
+      const {
+        name,
+        description,
+        phone,
+        email,
+        street,
+        city,
+        state,
+        pincode,
+        cuisine,
+        imageUrl,
+      } = req.body;
 
       await Restaurant.create({
         name,
@@ -159,7 +215,12 @@ module.exports = {
         phone,
         email,
         imageUrl,
-        cuisine: cuisine ? cuisine.split(",").map((c) => c.trim()).filter(Boolean) : [],
+        cuisine: cuisine
+          ? cuisine
+              .split(",")
+              .map((c) => c.trim())
+              .filter(Boolean)
+          : [],
         owner: req.user._id,
         address: { street, city, state, pincode },
       });
@@ -175,12 +236,18 @@ module.exports = {
 
   getEditRestaurant: async (req, res) => {
     try {
-      const restaurant = await Restaurant.findOne({ _id: req.params.id, owner: req.user._id }).lean();
+      const restaurant = await Restaurant.findOne({
+        _id: req.params.id,
+        owner: req.user._id,
+      }).lean();
       if (!restaurant) {
         req.flash("error", "Restaurant not found");
         return res.redirect("/restaurants");
       }
-      res.render("owner/restaurants/edit", { restaurant, messages: req.flash() });
+      res.render("owner/restaurants/edit", {
+        restaurant,
+        messages: req.flash(),
+      });
     } catch (err) {
       console.error(err);
       req.flash("error", "Error loading restaurant");
@@ -190,7 +257,19 @@ module.exports = {
 
   postUpdateRestaurant: async (req, res) => {
     try {
-      const { name, description, phone, email, street, city, state, pincode, cuisine, imageUrl, isActive } = req.body;
+      const {
+        name,
+        description,
+        phone,
+        email,
+        street,
+        city,
+        state,
+        pincode,
+        cuisine,
+        imageUrl,
+        isActive,
+      } = req.body;
 
       const updated = await Restaurant.findOneAndUpdate(
         { _id: req.params.id, owner: req.user._id },
@@ -200,11 +279,16 @@ module.exports = {
           phone,
           email,
           imageUrl,
-          cuisine: cuisine ? cuisine.split(",").map((c) => c.trim()).filter(Boolean) : [],
+          cuisine: cuisine
+            ? cuisine
+                .split(",")
+                .map((c) => c.trim())
+                .filter(Boolean)
+            : [],
           isActive: isActive === "on",
           address: { street, city, state, pincode },
         },
-        { new: true }
+        { new: true },
       );
 
       if (!updated) {
@@ -223,7 +307,10 @@ module.exports = {
 
   deleteRestaurant: async (req, res) => {
     try {
-      const restaurant = await Restaurant.findOneAndDelete({ _id: req.params.id, owner: req.user._id });
+      const restaurant = await Restaurant.findOneAndDelete({
+        _id: req.params.id,
+        owner: req.user._id,
+      });
       if (!restaurant) {
         req.flash("error", "Restaurant not found");
         return res.redirect("/restaurants");
@@ -245,14 +332,24 @@ module.exports = {
 
   getRestaurantMenu: async (req, res) => {
     try {
-      const restaurant = await getOwnedRestaurant(req.user._id, req.params.restaurantId);
+      const restaurant = await getOwnedRestaurant(
+        req.user._id,
+        req.params.restaurantId,
+      );
       if (!restaurant) {
         req.flash("error", "Restaurant not found");
         return res.redirect("/restaurants");
       }
 
-      const menuItems = await MenuItem.find({ restaurant: restaurant._id }).populate("category").sort({ createdAt: -1 }).lean();
-      res.render("owner/menu/index", { restaurant, menuItems, messages: req.flash() });
+      const menuItems = await MenuItem.find({ restaurant: restaurant._id })
+        .populate("category")
+        .sort({ createdAt: -1 })
+        .lean();
+      res.render("owner/menu/index", {
+        restaurant,
+        menuItems,
+        messages: req.flash(),
+      });
     } catch (err) {
       console.error(err);
       req.flash("error", "Error loading menu items");
@@ -262,14 +359,23 @@ module.exports = {
 
   getCreateMenuItem: async (req, res) => {
     try {
-      const restaurant = await getOwnedRestaurant(req.user._id, req.params.restaurantId);
+      const restaurant = await getOwnedRestaurant(
+        req.user._id,
+        req.params.restaurantId,
+      );
       if (!restaurant) {
         req.flash("error", "Restaurant not found");
         return res.redirect("/restaurants");
       }
 
-      const categories = await Category.find({ isActive: true }).sort({ name: 1 }).lean();
-      res.render("owner/menu/create", { restaurant, categories, messages: req.flash() });
+      const categories = await Category.find({ isActive: true })
+        .sort({ name: 1 })
+        .lean();
+      res.render("owner/menu/create", {
+        restaurant,
+        categories,
+        messages: req.flash(),
+      });
     } catch (err) {
       console.error(err);
       req.flash("error", "Error loading menu form");
@@ -279,14 +385,30 @@ module.exports = {
 
   postCreateMenuItem: async (req, res) => {
     try {
-      const restaurant = await getOwnedRestaurant(req.user._id, req.params.restaurantId);
+      const restaurant = await getOwnedRestaurant(
+        req.user._id,
+        req.params.restaurantId,
+      );
       if (!restaurant) {
         req.flash("error", "Restaurant not found");
         return res.redirect("/restaurants");
       }
 
-      const { title, category, foodType, description, price, originalPrice, calories, tags, customizable, isAvailable } = req.body;
-      const imageUrl = req.file ? `/uploads/owner/${req.file.filename}` : req.body.imageUrl || null;
+      const {
+        title,
+        category,
+        foodType,
+        description,
+        price,
+        originalPrice,
+        calories,
+        tags,
+        customizable,
+        isAvailable,
+      } = req.body;
+      const imageUrl = req.file
+        ? `/uploads/owner/${req.file.filename}`
+        : req.body.imageUrl || null;
 
       await MenuItem.create({
         title,
@@ -297,7 +419,12 @@ module.exports = {
         price: parseFloat(price),
         originalPrice: originalPrice ? parseFloat(originalPrice) : null,
         calories: calories ? parseInt(calories, 10) : null,
-        tags: tags ? tags.split(",").map((t) => t.trim()).filter(Boolean) : [],
+        tags: tags
+          ? tags
+              .split(",")
+              .map((t) => t.trim())
+              .filter(Boolean)
+          : [],
         customizable: customizable === "on",
         isAvailable: isAvailable !== "off",
         imageUrl,
@@ -314,20 +441,33 @@ module.exports = {
 
   getEditMenuItem: async (req, res) => {
     try {
-      const restaurant = await getOwnedRestaurant(req.user._id, req.params.restaurantId);
+      const restaurant = await getOwnedRestaurant(
+        req.user._id,
+        req.params.restaurantId,
+      );
       if (!restaurant) {
         req.flash("error", "Restaurant not found");
         return res.redirect("/restaurants");
       }
 
-      const menuItem = await MenuItem.findOne({ _id: req.params.id, restaurant: restaurant._id }).lean();
+      const menuItem = await MenuItem.findOne({
+        _id: req.params.id,
+        restaurant: restaurant._id,
+      }).lean();
       if (!menuItem) {
         req.flash("error", "Menu item not found");
         return res.redirect(`/restaurants/${restaurant._id}/menu`);
       }
 
-      const categories = await Category.find({ isActive: true }).sort({ name: 1 }).lean();
-      res.render("owner/menu/edit", { restaurant, menuItem, categories, messages: req.flash() });
+      const categories = await Category.find({ isActive: true })
+        .sort({ name: 1 })
+        .lean();
+      res.render("owner/menu/edit", {
+        restaurant,
+        menuItem,
+        categories,
+        messages: req.flash(),
+      });
     } catch (err) {
       console.error(err);
       req.flash("error", "Error loading menu item");
@@ -337,13 +477,27 @@ module.exports = {
 
   postUpdateMenuItem: async (req, res) => {
     try {
-      const restaurant = await getOwnedRestaurant(req.user._id, req.params.restaurantId);
+      const restaurant = await getOwnedRestaurant(
+        req.user._id,
+        req.params.restaurantId,
+      );
       if (!restaurant) {
         req.flash("error", "Restaurant not found");
         return res.redirect("/restaurants");
       }
 
-      const { title, category, foodType, description, price, originalPrice, calories, tags, customizable, isAvailable } = req.body;
+      const {
+        title,
+        category,
+        foodType,
+        description,
+        price,
+        originalPrice,
+        calories,
+        tags,
+        customizable,
+        isAvailable,
+      } = req.body;
 
       const updateData = {
         title,
@@ -353,7 +507,12 @@ module.exports = {
         price: parseFloat(price),
         originalPrice: originalPrice ? parseFloat(originalPrice) : null,
         calories: calories ? parseInt(calories, 10) : null,
-        tags: tags ? tags.split(",").map((t) => t.trim()).filter(Boolean) : [],
+        tags: tags
+          ? tags
+              .split(",")
+              .map((t) => t.trim())
+              .filter(Boolean)
+          : [],
         customizable: customizable === "on",
         isAvailable: isAvailable === "on",
       };
@@ -364,7 +523,7 @@ module.exports = {
       const updated = await MenuItem.findOneAndUpdate(
         { _id: req.params.id, restaurant: restaurant._id },
         updateData,
-        { new: true }
+        { new: true },
       );
 
       if (!updated) {
@@ -377,19 +536,27 @@ module.exports = {
     } catch (err) {
       console.error(err);
       req.flash("error", "Error updating menu item");
-      res.redirect(`/restaurants/${req.params.restaurantId}/menu/${req.params.id}/edit`);
+      res.redirect(
+        `/restaurants/${req.params.restaurantId}/menu/${req.params.id}/edit`,
+      );
     }
   },
 
   deleteMenuItem: async (req, res) => {
     try {
-      const restaurant = await getOwnedRestaurant(req.user._id, req.params.restaurantId);
+      const restaurant = await getOwnedRestaurant(
+        req.user._id,
+        req.params.restaurantId,
+      );
       if (!restaurant) {
         req.flash("error", "Restaurant not found");
         return res.redirect("/restaurants");
       }
 
-      await MenuItem.findOneAndDelete({ _id: req.params.id, restaurant: restaurant._id });
+      await MenuItem.findOneAndDelete({
+        _id: req.params.id,
+        restaurant: restaurant._id,
+      });
       req.flash("success", "Menu item deleted successfully");
       res.redirect(`/restaurants/${restaurant._id}/menu`);
     } catch (err) {
@@ -401,7 +568,10 @@ module.exports = {
 
   getRestaurantOrders: async (req, res) => {
     try {
-      const restaurant = await getOwnedRestaurant(req.user._id, req.params.restaurantId);
+      const restaurant = await getOwnedRestaurant(
+        req.user._id,
+        req.params.restaurantId,
+      );
       if (!restaurant) {
         req.flash("error", "Restaurant not found");
         return res.redirect("/restaurants");
@@ -431,7 +601,10 @@ module.exports = {
 
   updateOrderStatus: async (req, res) => {
     try {
-      const restaurant = await getOwnedRestaurant(req.user._id, req.params.restaurantId);
+      const restaurant = await getOwnedRestaurant(
+        req.user._id,
+        req.params.restaurantId,
+      );
       if (!restaurant) {
         req.flash("error", "Restaurant not found");
         return res.redirect("/restaurants");
@@ -445,7 +618,7 @@ module.exports = {
 
       await Order.findOneAndUpdate(
         { _id: req.params.orderId, restaurant: restaurant._id },
-        { orderStatus }
+        { orderStatus },
       );
 
       req.flash("success", "Order status updated");
@@ -459,14 +632,23 @@ module.exports = {
 
   getRestaurantCoupons: async (req, res) => {
     try {
-      const restaurant = await getOwnedRestaurant(req.user._id, req.params.restaurantId);
+      const restaurant = await getOwnedRestaurant(
+        req.user._id,
+        req.params.restaurantId,
+      );
       if (!restaurant) {
         req.flash("error", "Restaurant not found");
         return res.redirect("/restaurants");
       }
 
-      const coupons = await Coupon.find({ restaurant: restaurant._id }).sort({ createdAt: -1 }).lean();
-      res.render("owner/coupons/index", { restaurant, coupons, messages: req.flash() });
+      const coupons = await Coupon.find({ restaurant: restaurant._id })
+        .sort({ createdAt: -1 })
+        .lean();
+      res.render("owner/coupons/index", {
+        restaurant,
+        coupons,
+        messages: req.flash(),
+      });
     } catch (err) {
       console.error(err);
       req.flash("error", "Error loading coupons");
@@ -476,7 +658,10 @@ module.exports = {
 
   getCreateCoupon: async (req, res) => {
     try {
-      const restaurant = await getOwnedRestaurant(req.user._id, req.params.restaurantId);
+      const restaurant = await getOwnedRestaurant(
+        req.user._id,
+        req.params.restaurantId,
+      );
       if (!restaurant) {
         req.flash("error", "Restaurant not found");
         return res.redirect("/restaurants");
@@ -491,7 +676,10 @@ module.exports = {
 
   postCreateCoupon: async (req, res) => {
     try {
-      const restaurant = await getOwnedRestaurant(req.user._id, req.params.restaurantId);
+      const restaurant = await getOwnedRestaurant(
+        req.user._id,
+        req.params.restaurantId,
+      );
       if (!restaurant) {
         req.flash("error", "Restaurant not found");
         return res.redirect("/restaurants");
@@ -523,7 +711,10 @@ module.exports = {
         validFrom: new Date(validFrom),
         validUntil: new Date(validUntil),
         applicableMealTypes: applicableMealTypes
-          ? applicableMealTypes.split(",").map((x) => x.trim()).filter(Boolean)
+          ? applicableMealTypes
+              .split(",")
+              .map((x) => x.trim())
+              .filter(Boolean)
           : [],
         isActive: isActive === "on",
       });
@@ -532,26 +723,41 @@ module.exports = {
       res.redirect(`/restaurants/${restaurant._id}/coupons`);
     } catch (err) {
       console.error(err);
-      req.flash("error", err.code === 11000 ? "Coupon code already exists" : "Error creating coupon");
+      req.flash(
+        "error",
+        err.code === 11000
+          ? "Coupon code already exists"
+          : "Error creating coupon",
+      );
       res.redirect(`/restaurants/${req.params.restaurantId}/coupons/create`);
     }
   },
 
   getEditCoupon: async (req, res) => {
     try {
-      const restaurant = await getOwnedRestaurant(req.user._id, req.params.restaurantId);
+      const restaurant = await getOwnedRestaurant(
+        req.user._id,
+        req.params.restaurantId,
+      );
       if (!restaurant) {
         req.flash("error", "Restaurant not found");
         return res.redirect("/restaurants");
       }
 
-      const coupon = await Coupon.findOne({ _id: req.params.couponId, restaurant: restaurant._id }).lean();
+      const coupon = await Coupon.findOne({
+        _id: req.params.couponId,
+        restaurant: restaurant._id,
+      }).lean();
       if (!coupon) {
         req.flash("error", "Coupon not found");
         return res.redirect(`/restaurants/${restaurant._id}/coupons`);
       }
 
-      res.render("owner/coupons/edit", { restaurant, coupon, messages: req.flash() });
+      res.render("owner/coupons/edit", {
+        restaurant,
+        coupon,
+        messages: req.flash(),
+      });
     } catch (err) {
       console.error(err);
       req.flash("error", "Error loading coupon");
@@ -561,7 +767,10 @@ module.exports = {
 
   postUpdateCoupon: async (req, res) => {
     try {
-      const restaurant = await getOwnedRestaurant(req.user._id, req.params.restaurantId);
+      const restaurant = await getOwnedRestaurant(
+        req.user._id,
+        req.params.restaurantId,
+      );
       if (!restaurant) {
         req.flash("error", "Restaurant not found");
         return res.redirect("/restaurants");
@@ -581,7 +790,10 @@ module.exports = {
         isActive,
       } = req.body;
 
-      const coupon = await Coupon.findOne({ _id: req.params.couponId, restaurant: restaurant._id });
+      const coupon = await Coupon.findOne({
+        _id: req.params.couponId,
+        restaurant: restaurant._id,
+      });
       if (!coupon) {
         req.flash("error", "Coupon not found");
         return res.redirect(`/restaurants/${restaurant._id}/coupons`);
@@ -592,12 +804,17 @@ module.exports = {
       coupon.discountType = discountType;
       coupon.discountValue = parseFloat(discountValue);
       coupon.minimumOrderAmount = parseFloat(minimumOrderAmount) || 0;
-      coupon.maximumDiscount = maximumDiscount ? parseFloat(maximumDiscount) : null;
+      coupon.maximumDiscount = maximumDiscount
+        ? parseFloat(maximumDiscount)
+        : null;
       coupon.usageLimit = usageLimit ? parseInt(usageLimit, 10) : null;
       coupon.validFrom = new Date(validFrom);
       coupon.validUntil = new Date(validUntil);
       coupon.applicableMealTypes = applicableMealTypes
-        ? applicableMealTypes.split(",").map((x) => x.trim()).filter(Boolean)
+        ? applicableMealTypes
+            .split(",")
+            .map((x) => x.trim())
+            .filter(Boolean)
         : [];
       coupon.isActive = isActive === "on";
 
@@ -606,20 +823,33 @@ module.exports = {
       res.redirect(`/restaurants/${restaurant._id}/coupons`);
     } catch (err) {
       console.error(err);
-      req.flash("error", err.code === 11000 ? "Coupon code already exists" : "Error updating coupon");
-      res.redirect(`/restaurants/${req.params.restaurantId}/coupons/${req.params.couponId}/edit`);
+      req.flash(
+        "error",
+        err.code === 11000
+          ? "Coupon code already exists"
+          : "Error updating coupon",
+      );
+      res.redirect(
+        `/restaurants/${req.params.restaurantId}/coupons/${req.params.couponId}/edit`,
+      );
     }
   },
 
   deleteCoupon: async (req, res) => {
     try {
-      const restaurant = await getOwnedRestaurant(req.user._id, req.params.restaurantId);
+      const restaurant = await getOwnedRestaurant(
+        req.user._id,
+        req.params.restaurantId,
+      );
       if (!restaurant) {
         req.flash("error", "Restaurant not found");
         return res.redirect("/restaurants");
       }
 
-      await Coupon.findOneAndDelete({ _id: req.params.couponId, restaurant: restaurant._id });
+      await Coupon.findOneAndDelete({
+        _id: req.params.couponId,
+        restaurant: restaurant._id,
+      });
       req.flash("success", "Coupon deleted successfully");
       res.redirect(`/restaurants/${restaurant._id}/coupons`);
     } catch (err) {
@@ -629,4 +859,3 @@ module.exports = {
     }
   },
 };
-

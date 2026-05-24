@@ -16,7 +16,10 @@ const MEAL_HOUR_MAP = {
 function getRestaurantRef(menuItem) {
   if (!menuItem || !menuItem.restaurant) return null;
   if (typeof menuItem.restaurant === "object" && menuItem.restaurant._id) {
-    return { id: menuItem.restaurant._id.toString(), name: menuItem.restaurant.name || "Restaurant" };
+    return {
+      id: menuItem.restaurant._id.toString(),
+      name: menuItem.restaurant.name || "Restaurant",
+    };
   }
   return { id: menuItem.restaurant.toString(), name: "Restaurant" };
 }
@@ -44,7 +47,8 @@ function groupCartItemsByRestaurant(cartItems, customizations = {}) {
     const quantity = Number(item.quantity || 0);
     group.items.push({
       ...item.toObject(),
-      transientCustomization: customizations[item.menuItem._id.toString()] || DEFAULT_CUSTOMIZATION,
+      transientCustomization:
+        customizations[item.menuItem._id.toString()] || DEFAULT_CUSTOMIZATION,
     });
     group.subtotal += price * quantity;
   }
@@ -65,10 +69,12 @@ function buildOrderItems(items) {
 module.exports = {
   getCheckout: async (req, res) => {
     try {
-      const cart = await Cart.findOne({ user: req.user._id }).populate({
-        path: "items.menuItem",
-        populate: { path: "restaurant", select: "name" },
-      }).populate("coupon");
+      const cart = await Cart.findOne({ user: req.user._id })
+        .populate({
+          path: "items.menuItem",
+          populate: { path: "restaurant", select: "name" },
+        })
+        .populate("coupon");
 
       if (!cart || cart.items.length === 0) {
         req.flash("error", "Your cart is empty");
@@ -76,7 +82,10 @@ module.exports = {
       }
 
       const customizations = req.session.itemCustomizations || {};
-      const restaurantGroups = groupCartItemsByRestaurant(cart.items, customizations);
+      const restaurantGroups = groupCartItemsByRestaurant(
+        cart.items,
+        customizations,
+      );
 
       if (!restaurantGroups.length) {
         req.flash("error", "No valid items available in cart");
@@ -108,7 +117,9 @@ module.exports = {
   getBulkOrderPage: async (req, res) => {
     try {
       // Get all available menu items grouped by restaurant
-      const menuItems = await MenuItem.find({ isAvailable: true }).populate("restaurant", "name").sort({ "restaurant.name": 1, title: 1 });
+      const menuItems = await MenuItem.find({ isAvailable: true })
+        .populate("restaurant", "name")
+        .sort({ "restaurant.name": 1, title: 1 });
 
       // Group items by restaurant
       const restaurantGroups = new Map();
@@ -143,7 +154,9 @@ module.exports = {
 
   getOrders: async (req, res) => {
     try {
-      const orders = await Order.find({ user: req.user._id }).populate("restaurant", "name").sort({ createdAt: -1 });
+      const orders = await Order.find({ user: req.user._id })
+        .populate("restaurant", "name")
+        .sort({ createdAt: -1 });
       return res.render("orders/index", { orders, messages: req.flash() });
     } catch (err) {
       console.error(err);
@@ -155,7 +168,10 @@ module.exports = {
   getOrderDetails: async (req, res) => {
     try {
       const { id } = req.params;
-      const query = req.user.role === "admin" ? { _id: id } : { _id: id, user: req.user._id };
+      const query =
+        req.user.role === "admin"
+          ? { _id: id }
+          : { _id: id, user: req.user._id };
       const order = await Order.findOne(query).populate("restaurant", "name");
 
       if (!order) {
@@ -173,13 +189,22 @@ module.exports = {
 
   createOrder: async (req, res) => {
     try {
-      const { paymentMethod, street, city, state, pincode, specialInstructions } = req.body;
+      const {
+        paymentMethod,
+        street,
+        city,
+        state,
+        pincode,
+        specialInstructions,
+      } = req.body;
       const userId = req.user._id;
 
-      const cart = await Cart.findOne({ user: userId }).populate({
-        path: "items.menuItem",
-        populate: { path: "restaurant", select: "name" },
-      }).populate("coupon");
+      const cart = await Cart.findOne({ user: userId })
+        .populate({
+          path: "items.menuItem",
+          populate: { path: "restaurant", select: "name" },
+        })
+        .populate("coupon");
 
       if (!cart || cart.items.length === 0) {
         req.flash("error", "Your cart is empty");
@@ -188,25 +213,35 @@ module.exports = {
 
       for (const item of cart.items) {
         if (!item.menuItem || !item.menuItem.isAvailable) {
-          req.flash("error", `Item ${item.menuItem?.title || "Unknown"} is no longer available`);
+          req.flash(
+            "error",
+            `Item ${item.menuItem?.title || "Unknown"} is no longer available`,
+          );
           return res.redirect("/cart");
         }
       }
 
-      const restaurantGroups = groupCartItemsByRestaurant(cart.items, req.session.itemCustomizations || {});
+      const restaurantGroups = groupCartItemsByRestaurant(
+        cart.items,
+        req.session.itemCustomizations || {},
+      );
       if (!restaurantGroups.length) {
         req.flash("error", "No valid items available for order");
         return res.redirect("/cart");
       }
 
-      const couponRestaurantId = cart.coupon && cart.coupon.restaurant ? cart.coupon.restaurant.toString() : null;
+      const couponRestaurantId =
+        cart.coupon && cart.coupon.restaurant
+          ? cart.coupon.restaurant.toString()
+          : null;
       const createdOrders = [];
 
       for (const group of restaurantGroups) {
         const subtotal = group.subtotal;
-        const discountAmount = couponRestaurantId && couponRestaurantId === group.restaurantId
-          ? Math.min(cart.discountAmount || 0, subtotal)
-          : 0;
+        const discountAmount =
+          couponRestaurantId && couponRestaurantId === group.restaurantId
+            ? Math.min(cart.discountAmount || 0, subtotal)
+            : 0;
         const taxableAmount = Math.max(0, subtotal - discountAmount);
         const taxAmount = Math.round(taxableAmount * 0.18 * 100) / 100;
         const totalAmount = taxableAmount + taxAmount;
@@ -230,12 +265,16 @@ module.exports = {
         createdOrders.push(order);
 
         for (const item of group.items) {
-          await MenuItem.findByIdAndUpdate(item.menuItem._id, { $inc: { orderCount: item.quantity } });
+          await MenuItem.findByIdAndUpdate(item.menuItem._id, {
+            $inc: { orderCount: item.quantity },
+          });
         }
       }
 
       if (cart.coupon) {
-        await Coupon.findByIdAndUpdate(cart.coupon._id, { $inc: { usedCount: 1 } });
+        await Coupon.findByIdAndUpdate(cart.coupon._id, {
+          $inc: { usedCount: 1 },
+        });
       }
 
       // Keep cart items after ordering - don't delete cart
@@ -244,11 +283,17 @@ module.exports = {
 
       if (paymentMethod === "online") {
         if (createdOrders.length === 1) {
-          req.flash("success", "Order created. Please complete payment to confirm.");
+          req.flash(
+            "success",
+            "Order created. Please complete payment to confirm.",
+          );
           return res.redirect(`/orders/${createdOrders[0]._id}/payment`);
         }
 
-        req.flash("success", `${createdOrders.length} restaurant-wise orders created. Complete payment in each order details.`);
+        req.flash(
+          "success",
+          `${createdOrders.length} restaurant-wise orders created. Complete payment in each order details.`,
+        );
         return res.redirect("/orders");
       }
 
@@ -257,7 +302,10 @@ module.exports = {
         return res.redirect(`/orders/${createdOrders[0]._id}`);
       }
 
-      req.flash("success", `${createdOrders.length} orders placed successfully (restaurant-wise).`);
+      req.flash(
+        "success",
+        `${createdOrders.length} orders placed successfully (restaurant-wise).`,
+      );
       return res.redirect("/orders");
     } catch (err) {
       console.error(err);
@@ -268,21 +316,36 @@ module.exports = {
 
   createDirectOrder: async (req, res) => {
     try {
-      let { menuItemId, quantity = 1, specialInstructions = "", customizationOption } = req.body;
+      let {
+        menuItemId,
+        quantity = 1,
+        specialInstructions = "",
+        customizationOption,
+      } = req.body;
 
       specialInstructions = Array.isArray(specialInstructions)
-      ? specialInstructions.join(" ")
-      : specialInstructions;
+        ? specialInstructions.join(" ")
+        : specialInstructions;
 
-      let { paymentMethod, street, city, state, pincode, specialInstructions: orderInstructions } = req.body;
+      let {
+        paymentMethod,
+        street,
+        city,
+        state,
+        pincode,
+        specialInstructions: orderInstructions,
+      } = req.body;
 
       orderInstructions = Array.isArray(orderInstructions)
-      ? orderInstructions.join(" ")
-      : orderInstructions;
+        ? orderInstructions.join(" ")
+        : orderInstructions;
 
       const userId = req.user._id;
 
-      const menuItem = await MenuItem.findById(menuItemId).populate("restaurant", "name");
+      const menuItem = await MenuItem.findById(menuItemId).populate(
+        "restaurant",
+        "name",
+      );
       if (!menuItem || !menuItem.isAvailable) {
         req.flash("error", "Menu item not available");
         return res.redirect(`/menu/${menuItemId}`);
@@ -320,10 +383,15 @@ module.exports = {
       await order.save();
 
       // Update menu item order count
-      await MenuItem.findByIdAndUpdate(menuItem._id, { $inc: { orderCount: qty } });
+      await MenuItem.findByIdAndUpdate(menuItem._id, {
+        $inc: { orderCount: qty },
+      });
 
       if (paymentMethod === "online") {
-        req.flash("success", "Order created. Please complete payment to confirm.");
+        req.flash(
+          "success",
+          "Order created. Please complete payment to confirm.",
+        );
         return res.redirect(`/orders/${order._id}/payment`);
       }
 
@@ -338,7 +406,19 @@ module.exports = {
 
   createBulkOrder: async (req, res) => {
     try {
-      const { restaurantId, items, mealType, days, startDate, paymentMethod, street, city, state, pincode, specialInstructions } = req.body;
+      const {
+        restaurantId,
+        items,
+        mealType,
+        days,
+        startDate,
+        paymentMethod,
+        street,
+        city,
+        state,
+        pincode,
+        specialInstructions,
+      } = req.body;
 
       if (!MEAL_TYPES.includes(mealType)) {
         req.flash("error", "Invalid meal type");
@@ -355,7 +435,7 @@ module.exports = {
 
       // Parse selected items
       let selectedItems = [];
-      if (typeof items === 'string') {
+      if (typeof items === "string") {
         selectedItems = JSON.parse(items);
       } else if (Array.isArray(items)) {
         selectedItems = items;
@@ -367,8 +447,11 @@ module.exports = {
       }
 
       // Validate and fetch menu items
-      const menuItemIds = selectedItems.map(item => item.menuItemId);
-      const menuItems = await MenuItem.find({ _id: { $in: menuItemIds }, isAvailable: true }).populate("restaurant", "name");
+      const menuItemIds = selectedItems.map((item) => item.menuItemId);
+      const menuItems = await MenuItem.find({
+        _id: { $in: menuItemIds },
+        isAvailable: true,
+      }).populate("restaurant", "name");
 
       if (menuItems.length !== selectedItems.length) {
         req.flash("error", "Some selected items are no longer available");
@@ -376,9 +459,14 @@ module.exports = {
       }
 
       // Verify all items belong to the selected restaurant
-      const invalidItems = menuItems.filter(item => item.restaurant._id.toString() !== restaurantId);
+      const invalidItems = menuItems.filter(
+        (item) => item.restaurant._id.toString() !== restaurantId,
+      );
       if (invalidItems.length > 0) {
-        req.flash("error", "All selected items must belong to the same restaurant");
+        req.flash(
+          "error",
+          "All selected items must belong to the same restaurant",
+        );
         return res.redirect("/orders/bulk");
       }
 
@@ -390,8 +478,10 @@ module.exports = {
         scheduledFor.setHours(MEAL_HOUR_MAP[mealType] || 13, 0, 0, 0);
 
         // Build order items
-        const orderItems = selectedItems.map(selectedItem => {
-          const menuItem = menuItems.find(m => m._id.toString() === selectedItem.menuItemId);
+        const orderItems = selectedItems.map((selectedItem) => {
+          const menuItem = menuItems.find(
+            (m) => m._id.toString() === selectedItem.menuItemId,
+          );
           return {
             menuItem: menuItem._id,
             title: menuItem.title,
@@ -401,7 +491,10 @@ module.exports = {
           };
         });
 
-        const subtotal = orderItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+        const subtotal = orderItems.reduce(
+          (sum, item) => sum + item.price * item.quantity,
+          0,
+        );
         const taxAmount = Math.round(subtotal * 0.18 * 100) / 100;
         const totalAmount = subtotal + taxAmount;
 
@@ -419,7 +512,9 @@ module.exports = {
           paymentStatus: paymentMethod === "cod" ? "pending" : "pending",
           deliveryAddress: { street, city, state, pincode },
           specialInstructions: specialInstructions || "",
-          estimatedDeliveryTime: new Date(scheduledFor.getTime() + 45 * 60 * 1000),
+          estimatedDeliveryTime: new Date(
+            scheduledFor.getTime() + 45 * 60 * 1000,
+          ),
         });
 
         await order.save();
@@ -429,10 +524,15 @@ module.exports = {
       // Update order counts
       for (const selectedItem of selectedItems) {
         const quantity = parseInt(selectedItem.quantity) || 1;
-        await MenuItem.findByIdAndUpdate(selectedItem.menuItemId, { $inc: { orderCount: quantity * totalDays } });
+        await MenuItem.findByIdAndUpdate(selectedItem.menuItemId, {
+          $inc: { orderCount: quantity * totalDays },
+        });
       }
 
-      req.flash("success", `Bulk order created: ${createdOrders.length} daily ${mealType} orders for one restaurant.`);
+      req.flash(
+        "success",
+        `Bulk order created: ${createdOrders.length} daily ${mealType} orders for one restaurant.`,
+      );
       return res.redirect("/orders");
     } catch (err) {
       console.error(err);
@@ -444,7 +544,11 @@ module.exports = {
   getPaymentPage: async (req, res) => {
     try {
       const { id } = req.params;
-      const order = await Order.findOne({ _id: id, user: req.user._id, paymentMethod: "online" });
+      const order = await Order.findOne({
+        _id: id,
+        user: req.user._id,
+        paymentMethod: "online",
+      });
 
       if (!order) {
         req.flash("error", "Payment page not available for this order");
@@ -467,7 +571,11 @@ module.exports = {
   processPayment: async (req, res) => {
     try {
       const { id } = req.params;
-      const order = await Order.findOne({ _id: id, user: req.user._id, paymentMethod: "online" });
+      const order = await Order.findOne({
+        _id: id,
+        user: req.user._id,
+        paymentMethod: "online",
+      });
 
       if (!order) {
         req.flash("error", "Payment could not be processed");
@@ -475,7 +583,8 @@ module.exports = {
       }
 
       order.paymentStatus = "paid";
-      order.orderStatus = order.orderStatus === "Placed" ? "Confirmed" : order.orderStatus;
+      order.orderStatus =
+        order.orderStatus === "Placed" ? "Confirmed" : order.orderStatus;
       await order.save();
 
       req.flash("success", "Payment successful! Your order is confirmed.");
@@ -493,8 +602,14 @@ module.exports = {
       if (req.query.mealType) filter.mealType = req.query.mealType;
       if (req.query.status) filter.orderStatus = req.query.status;
 
-      const orders = await Order.find(filter).populate("user", "name email").sort({ createdAt: -1 });
-      return res.render("admin/orders/index", { orders, query: req.query, messages: req.flash() });
+      const orders = await Order.find(filter)
+        .populate("user", "name email")
+        .sort({ createdAt: -1 });
+      return res.render("admin/orders/index", {
+        orders,
+        query: req.query,
+        messages: req.flash(),
+      });
     } catch (err) {
       console.error(err);
       req.flash("error", "Error loading orders");
@@ -525,7 +640,10 @@ module.exports = {
       }
 
       const result = await Order.deleteMany({});
-      req.flash("success", `Cleared ${result.deletedCount} orders from the system`);
+      req.flash(
+        "success",
+        `Cleared ${result.deletedCount} orders from the system`,
+      );
       return res.redirect("/admin/orders");
     } catch (err) {
       console.error(err);

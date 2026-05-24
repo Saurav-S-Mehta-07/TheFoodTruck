@@ -13,7 +13,7 @@ module.exports = {
 
       const coupon = await Coupon.findOne({
         code: code.toUpperCase(),
-        isActive: true
+        isActive: true,
       });
 
       if (!coupon) {
@@ -22,9 +22,15 @@ module.exports = {
 
       if (!coupon.canApply(orderAmount, mealType)) {
         let message = "Coupon cannot be applied";
-        if (coupon.minimumOrderAmount > 0 && orderAmount < coupon.minimumOrderAmount) {
+        if (
+          coupon.minimumOrderAmount > 0 &&
+          orderAmount < coupon.minimumOrderAmount
+        ) {
           message = `Minimum order amount of ₹${coupon.minimumOrderAmount} required`;
-        } else if (coupon.applicableMealTypes.length > 0 && !coupon.applicableMealTypes.includes(mealType)) {
+        } else if (
+          coupon.applicableMealTypes.length > 0 &&
+          !coupon.applicableMealTypes.includes(mealType)
+        ) {
           message = `Coupon not applicable for ${mealType}`;
         }
         return res.json({ valid: false, message });
@@ -40,9 +46,9 @@ module.exports = {
           description: coupon.description,
           discountType: coupon.discountType,
           discountValue: coupon.discountValue,
-          discount: discount
+          discount: discount,
         },
-        message: `Coupon applied! You save ₹${discount}`
+        message: `Coupon applied! You save ₹${discount}`,
       });
     } catch (err) {
       console.error(err);
@@ -69,7 +75,7 @@ module.exports = {
         coupons,
         currentPage: page,
         totalPages,
-        messages: req.flash()
+        messages: req.flash(),
       });
     } catch (err) {
       console.error(err);
@@ -96,7 +102,7 @@ module.exports = {
         usageLimit,
         validFrom,
         validUntil,
-        applicableMealTypes
+        applicableMealTypes,
       } = req.body;
       let restaurantId = req.body.restaurant;
       if (!restaurantId) {
@@ -105,7 +111,10 @@ module.exports = {
       }
 
       if (!restaurantId) {
-        req.flash("error", "Please create a restaurant before creating coupons");
+        req.flash(
+          "error",
+          "Please create a restaurant before creating coupons",
+        );
         return res.redirect("/admin/restaurants/create");
       }
 
@@ -120,7 +129,9 @@ module.exports = {
         usageLimit: usageLimit ? parseInt(usageLimit) : null,
         validFrom: new Date(validFrom),
         validUntil: new Date(validUntil),
-        applicableMealTypes: applicableMealTypes ? applicableMealTypes.split(',').map(type => type.trim()) : []
+        applicableMealTypes: applicableMealTypes
+          ? applicableMealTypes.split(",").map((type) => type.trim())
+          : [],
       });
 
       await coupon.save();
@@ -168,7 +179,7 @@ module.exports = {
         validFrom,
         validUntil,
         applicableMealTypes,
-        isActive
+        isActive,
       } = req.body;
 
       const coupon = await Coupon.findById(req.params.id);
@@ -182,12 +193,16 @@ module.exports = {
       coupon.discountType = discountType;
       coupon.discountValue = parseFloat(discountValue);
       coupon.minimumOrderAmount = parseFloat(minimumOrderAmount) || 0;
-      coupon.maximumDiscount = maximumDiscount ? parseFloat(maximumDiscount) : null;
+      coupon.maximumDiscount = maximumDiscount
+        ? parseFloat(maximumDiscount)
+        : null;
       coupon.usageLimit = usageLimit ? parseInt(usageLimit) : null;
       coupon.validFrom = new Date(validFrom);
       coupon.validUntil = new Date(validUntil);
-      coupon.applicableMealTypes = applicableMealTypes ? applicableMealTypes.split(',').map(type => type.trim()) : [];
-      coupon.isActive = isActive === 'on';
+      coupon.applicableMealTypes = applicableMealTypes
+        ? applicableMealTypes.split(",").map((type) => type.trim())
+        : [];
+      coupon.isActive = isActive === "on";
 
       await coupon.save();
       req.flash("success", "Coupon updated successfully");
@@ -219,5 +234,5 @@ module.exports = {
       req.flash("error", "Error deleting coupon");
       res.redirect("/admin/coupons");
     }
-  }
+  },
 };

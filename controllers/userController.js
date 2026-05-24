@@ -4,8 +4,13 @@ const Order = require("../models/Orders");
 module.exports = {
   getProfile: async (req, res) => {
     try {
-      const user = await User.findById(req.user._id).select("name email phone address role createdAt").lean();
-      const recentOrders = await Order.find({ user: req.user._id }).sort({ createdAt: -1 }).limit(5).lean();
+      const user = await User.findById(req.user._id)
+        .select("name email phone address role createdAt")
+        .lean();
+      const recentOrders = await Order.find({ user: req.user._id })
+        .sort({ createdAt: -1 })
+        .limit(5)
+        .lean();
       res.json({ user, recentOrders });
     } catch (err) {
       console.error(err);
@@ -21,7 +26,7 @@ module.exports = {
       await User.findByIdAndUpdate(req.user._id, {
         name,
         phone,
-        address: { street, city, state, pincode }
+        address: { street, city, state, pincode },
       });
 
       req.flash("success", "Profile updated successfully");
@@ -72,5 +77,5 @@ module.exports = {
       req.flash("error", "Error changing password");
       res.redirect("/user/profile");
     }
-  }
+  },
 };

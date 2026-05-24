@@ -15,7 +15,9 @@ const DEFAULT_CUSTOMIZATION = "Default";
 
 function normalizeCustomization(option) {
   if (!option || typeof option !== "string") return DEFAULT_CUSTOMIZATION;
-  return CUSTOMIZATION_OPTIONS.includes(option) ? option : DEFAULT_CUSTOMIZATION;
+  return CUSTOMIZATION_OPTIONS.includes(option)
+    ? option
+    : DEFAULT_CUSTOMIZATION;
 }
 
 function getCustomizationStore(req) {
@@ -27,7 +29,8 @@ function getCustomizationStore(req) {
 
 function getMenuItemRestaurantId(menuItem) {
   if (!menuItem || !menuItem.restaurant) return null;
-  if (typeof menuItem.restaurant === "object" && menuItem.restaurant._id) return menuItem.restaurant._id.toString();
+  if (typeof menuItem.restaurant === "object" && menuItem.restaurant._id)
+    return menuItem.restaurant._id.toString();
   return menuItem.restaurant.toString();
 }
 
@@ -52,7 +55,11 @@ async function syncCouponForCart(cart) {
     }
   }
 
-  if (eligibleSubtotal <= 0 || (couponDoc.minimumOrderAmount > 0 && eligibleSubtotal < couponDoc.minimumOrderAmount)) {
+  if (
+    eligibleSubtotal <= 0 ||
+    (couponDoc.minimumOrderAmount > 0 &&
+      eligibleSubtotal < couponDoc.minimumOrderAmount)
+  ) {
     cart.coupon = null;
     cart.discountAmount = 0;
     return;
@@ -64,7 +71,9 @@ async function syncCouponForCart(cart) {
 module.exports = {
   getCart: async (req, res) => {
     try {
-      const cart = await Cart.findOne({ user: req.user._id }).populate("items.menuItem").populate("coupon");
+      const cart = await Cart.findOne({ user: req.user._id })
+        .populate("items.menuItem")
+        .populate("coupon");
 
       if (!cart) {
         return res.render("cart/index", {
@@ -80,7 +89,9 @@ module.exports = {
       cart.items.forEach((item) => {
         if (item.menuItem) {
           subtotal += item.menuItem.price * item.quantity;
-          item.transientCustomization = normalizeCustomization(customizations[item.menuItem._id.toString()]);
+          item.transientCustomization = normalizeCustomization(
+            customizations[item.menuItem._id.toString()],
+          );
         }
       });
 
@@ -101,7 +112,12 @@ module.exports = {
 
   addToCart: async (req, res) => {
     try {
-      const { menuItemId, quantity = 1, specialInstructions = "", customizationOption } = req.body;
+      const {
+        menuItemId,
+        quantity = 1,
+        specialInstructions = "",
+        customizationOption,
+      } = req.body;
       const userId = req.user._id;
 
       const menuItem = await MenuItem.findById(menuItemId);
@@ -117,12 +133,19 @@ module.exports = {
         cart = new Cart({ user: userId, items: [] });
       }
 
-      const existingItem = cart.items.find((item) => item.menuItem.toString() === menuItemId);
+      const existingItem = cart.items.find(
+        (item) => item.menuItem.toString() === menuItemId,
+      );
       if (existingItem) {
         existingItem.quantity += qty;
-        if (specialInstructions) existingItem.specialInstructions = specialInstructions;
+        if (specialInstructions)
+          existingItem.specialInstructions = specialInstructions;
       } else {
-        cart.items.push({ menuItem: menuItemId, quantity: qty, specialInstructions });
+        cart.items.push({
+          menuItem: menuItemId,
+          quantity: qty,
+          specialInstructions,
+        });
       }
 
       const customizations = getCustomizationStore(req);
@@ -143,7 +166,8 @@ module.exports = {
 
   updateCartItem: async (req, res) => {
     try {
-      const { menuItemId, quantity, specialInstructions, customizationOption } = req.body;
+      const { menuItemId, quantity, specialInstructions, customizationOption } =
+        req.body;
       const userId = req.user._id;
 
       const cart = await Cart.findOne({ user: userId });
@@ -160,14 +184,18 @@ module.exports = {
 
       const qty = parseInt(quantity, 10) || 0;
       if (qty <= 0) {
-        cart.items = cart.items.filter((i) => i.menuItem.toString() !== menuItemId);
+        cart.items = cart.items.filter(
+          (i) => i.menuItem.toString() !== menuItemId,
+        );
         const customizations = getCustomizationStore(req);
         delete customizations[menuItemId];
       } else {
         item.quantity = qty;
-        if (specialInstructions !== undefined) item.specialInstructions = specialInstructions;
+        if (specialInstructions !== undefined)
+          item.specialInstructions = specialInstructions;
         const customizations = getCustomizationStore(req);
-        customizations[menuItemId] = normalizeCustomization(customizationOption);
+        customizations[menuItemId] =
+          normalizeCustomization(customizationOption);
       }
 
       if (cart.items.length === 0) {
@@ -199,7 +227,9 @@ module.exports = {
         return res.redirect("/cart");
       }
 
-      cart.items = cart.items.filter((item) => item.menuItem.toString() !== menuItemId);
+      cart.items = cart.items.filter(
+        (item) => item.menuItem.toString() !== menuItemId,
+      );
       const customizations = getCustomizationStore(req);
       delete customizations[menuItemId];
 
@@ -241,7 +271,9 @@ module.exports = {
       const { couponCode } = req.body;
       const userId = req.user._id;
 
-      const cart = await Cart.findOne({ user: userId }).populate("items.menuItem");
+      const cart = await Cart.findOne({ user: userId }).populate(
+        "items.menuItem",
+      );
       if (!cart || cart.items.length === 0) {
         req.flash("error", "Cart is empty");
         return res.redirect("/cart");
@@ -255,7 +287,10 @@ module.exports = {
         return res.redirect("/cart");
       }
 
-      const coupon = await Coupon.findOne({ code: couponCode.toUpperCase(), isActive: true });
+      const coupon = await Coupon.findOne({
+        code: couponCode.toUpperCase(),
+        isActive: true,
+      });
       if (!coupon) {
         req.flash("error", "Invalid coupon code");
         return res.redirect("/cart");
@@ -276,8 +311,14 @@ module.exports = {
         return res.redirect("/cart");
       }
 
-      if (coupon.minimumOrderAmount > 0 && eligibleSubtotal < coupon.minimumOrderAmount) {
-        req.flash("error", `Minimum order amount of Rs.${coupon.minimumOrderAmount} required for this restaurant`);
+      if (
+        coupon.minimumOrderAmount > 0 &&
+        eligibleSubtotal < coupon.minimumOrderAmount
+      ) {
+        req.flash(
+          "error",
+          `Minimum order amount of Rs.${coupon.minimumOrderAmount} required for this restaurant`,
+        );
         return res.redirect("/cart");
       }
 

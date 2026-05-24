@@ -12,7 +12,10 @@ const storage = multer.diskStorage({
   destination: (req, file, cb) => cb(null, "public/uploads/"),
   filename: (req, file, cb) => {
     const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
-    cb(null, file.fieldname + "-" + uniqueSuffix + path.extname(file.originalname));
+    cb(
+      null,
+      file.fieldname + "-" + uniqueSuffix + path.extname(file.originalname),
+    );
   },
 });
 
@@ -72,13 +75,18 @@ module.exports = {
           sortOption.createdAt = -1;
       }
 
-      let menuItems = await MenuItem.find(query).populate("category").sort(sortOption);
+      let menuItems = await MenuItem.find(query)
+        .populate("category")
+        .sort(sortOption);
       const categories = await Category.find();
 
       if (req.user && !category) {
         const preference = await getTopCategoryPreference(req.user._id);
         if (preference && preference.count >= 5) {
-          menuItems = prioritizeByCategory(menuItems, preference.categoryId.toString());
+          menuItems = prioritizeByCategory(
+            menuItems,
+            preference.categoryId.toString(),
+          );
         }
       }
 
@@ -113,33 +121,46 @@ module.exports = {
         await recordCategoryInteraction(req.user._id, menuItem.category._id);
       }
 
-      const reviews = await Review.find({ menuItem: id }).populate("user", "name").sort({ createdAt: -1 });
-      const userReview = req.user ? await Review.findOne({ menuItem: id, user: req.user._id }) : null;
+      const reviews = await Review.find({ menuItem: id })
+        .populate("user", "name")
+        .sort({ createdAt: -1 });
+      const userReview = req.user
+        ? await Review.findOne({ menuItem: id, user: req.user._id })
+        : null;
 
       const relatedQuery = { _id: { $ne: id }, isAvailable: true };
       if (menuItem.category) relatedQuery.category = menuItem.category._id;
-      const relatedItems = await MenuItem.find(relatedQuery).limit(4).sort({ orderCount: -1 });
+      const relatedItems = await MenuItem.find(relatedQuery)
+        .limit(4)
+        .sort({ orderCount: -1 });
 
       const canReview = req.user
         ? Boolean(
             await Order.exists({
               user: req.user._id,
               "items.menuItem": menuItem._id,
-            })
+            }),
           )
         : false;
 
       const averageRating =
         reviews.length > 0
-          ? (reviews.reduce((sum, review) => sum + review.rating, 0) / reviews.length).toFixed(1)
+          ? (
+              reviews.reduce((sum, review) => sum + review.rating, 0) /
+              reviews.length
+            ).toFixed(1)
           : 0;
 
       let cartItemQuantity = 0;
       if (req.user) {
-        const userCart = await Cart.findOne({ user: req.user._id }).select("items.menuItem items.quantity");
+        const userCart = await Cart.findOne({ user: req.user._id }).select(
+          "items.menuItem items.quantity",
+        );
         if (userCart && userCart.items && userCart.items.length) {
           const cartItem = userCart.items.find(
-            (item) => item.menuItem && item.menuItem.toString() === menuItem._id.toString()
+            (item) =>
+              item.menuItem &&
+              item.menuItem.toString() === menuItem._id.toString(),
           );
           cartItemQuantity = cartItem ? cartItem.quantity : 0;
         }
@@ -189,7 +210,17 @@ module.exports = {
   // Admin: Create menu item
   postCreateMenuItem: async (req, res) => {
     try {
-      const { title, category, foodType, description, price, originalPrice, calories, tags, customizable } = req.body;
+      const {
+        title,
+        category,
+        foodType,
+        description,
+        price,
+        originalPrice,
+        calories,
+        tags,
+        customizable,
+      } = req.body;
       const imageUrl = req.file ? `/uploads/${req.file.filename}` : null;
       let restaurantId = req.body.restaurant;
 
@@ -199,7 +230,10 @@ module.exports = {
       }
 
       if (!restaurantId) {
-        req.flash("error", "Please create a restaurant before adding menu items");
+        req.flash(
+          "error",
+          "Please create a restaurant before adding menu items",
+        );
         return res.redirect("/admin/restaurants/create");
       }
 
@@ -239,7 +273,11 @@ module.exports = {
         return res.redirect("/menu/admin");
       }
 
-      res.render("admin/menu/edit", { menuItem, categories, messages: req.flash() });
+      res.render("admin/menu/edit", {
+        menuItem,
+        categories,
+        messages: req.flash(),
+      });
     } catch (err) {
       console.error(err);
       req.flash("error", "Error loading menu item");
@@ -251,8 +289,18 @@ module.exports = {
   postUpdateMenuItem: async (req, res) => {
     try {
       const { id } = req.params;
-      const { title, category, foodType, description, price, originalPrice, calories, tags, customizable, isAvailable } =
-        req.body;
+      const {
+        title,
+        category,
+        foodType,
+        description,
+        price,
+        originalPrice,
+        calories,
+        tags,
+        customizable,
+        isAvailable,
+      } = req.body;
 
       const updateData = {
         title,
@@ -305,7 +353,10 @@ module.exports = {
         return res.redirect("/menu");
       }
 
-      const hasOrdered = await Order.exists({ user: req.user._id, "items.menuItem": menuItem._id });
+      const hasOrdered = await Order.exists({
+        user: req.user._id,
+        "items.menuItem": menuItem._id,
+      });
       if (!hasOrdered) {
         req.flash("error", "You can review only items you have ordered");
         return res.redirect(`/menu/${id}`);
@@ -326,7 +377,7 @@ module.exports = {
           rating: safeRating,
           comment: (comment || "").trim(),
         },
-        { upsert: true, new: true, setDefaultsOnInsert: true }
+        { upsert: true, new: true, setDefaultsOnInsert: true },
       );
 
       req.flash("success", "Thanks! Your review has been saved.");
@@ -341,8 +392,10 @@ module.exports = {
 
 function prioritizeByCategory(items, preferredCategoryId) {
   return [...items].sort((a, b) => {
-    const aMatch = a.category && a.category._id.toString() === preferredCategoryId ? 1 : 0;
-    const bMatch = b.category && b.category._id.toString() === preferredCategoryId ? 1 : 0;
+    const aMatch =
+      a.category && a.category._id.toString() === preferredCategoryId ? 1 : 0;
+    const bMatch =
+      b.category && b.category._id.toString() === preferredCategoryId ? 1 : 0;
     return bMatch - aMatch;
   });
 }
@@ -357,10 +410,13 @@ async function getTopCategoryPreference(userId) {
   const user = await User.findById(userId).select("preferredCategoryClicks");
   if (!user || !user.preferredCategoryClicks) return null;
 
-  const entries = Array.from(user.preferredCategoryClicks.entries ? user.preferredCategoryClicks.entries() : []);
+  const entries = Array.from(
+    user.preferredCategoryClicks.entries
+      ? user.preferredCategoryClicks.entries()
+      : [],
+  );
   if (!entries.length) return null;
 
   entries.sort((a, b) => b[1] - a[1]);
   return { categoryId: entries[0][0], count: entries[0][1] };
 }
-
