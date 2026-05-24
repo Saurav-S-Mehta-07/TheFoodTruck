@@ -49,33 +49,41 @@
 </style>
 
 <div class="flash-toast-wrap" id="flash-toast-wrap">
-  <% if (success && success.length > 0) { %>
+  <% if (success && success.length> 0) { %>
     <div class="flash-toast success" data-flash-toast>
-      <span><%= success[0] %></span>
+      <span>
+        <%= success[0] %>
+      </span>
       <button type="button" aria-label="Close" onclick="closeFlashToast(this)">&times;</button>
     </div>
-  <% } %>
+    <% } %>
 
-  <% if (error && error.length > 0) { %>
-    <div class="flash-toast error" data-flash-toast>
-      <span><%= error[0] %></span>
-      <button type="button" aria-label="Close" onclick="closeFlashToast(this)">&times;</button>
-    </div>
-  <% } %>
+      <% if (error && error.length> 0) { %>
+        <div class="flash-toast error" data-flash-toast>
+          <span>
+            <%= error[0] %>
+          </span>
+          <button type="button" aria-label="Close" onclick="closeFlashToast(this)">&times;</button>
+        </div>
+        <% } %>
 
-  <% if (messages && messages.success && messages.success.length > 0) { %>
-    <div class="flash-toast success" data-flash-toast>
-      <span><%= messages.success[0] %></span>
-      <button type="button" aria-label="Close" onclick="closeFlashToast(this)">&times;</button>
-    </div>
-  <% } %>
+          <% if (messages && messages.success && messages.success.length> 0) { %>
+            <div class="flash-toast success" data-flash-toast>
+              <span>
+                <%= messages.success[0] %>
+              </span>
+              <button type="button" aria-label="Close" onclick="closeFlashToast(this)">&times;</button>
+            </div>
+            <% } %>
 
-  <% if (messages && messages.error && messages.error.length > 0) { %>
-    <div class="flash-toast error" data-flash-toast>
-      <span><%= messages.error[0] %></span>
-      <button type="button" aria-label="Close" onclick="closeFlashToast(this)">&times;</button>
-    </div>
-  <% } %>
+              <% if (messages && messages.error && messages.error.length> 0) { %>
+                <div class="flash-toast error" data-flash-toast>
+                  <span>
+                    <%= messages.error[0] %>
+                  </span>
+                  <button type="button" aria-label="Close" onclick="closeFlashToast(this)">&times;</button>
+                </div>
+                <% } %>
 </div>
 
 <script>

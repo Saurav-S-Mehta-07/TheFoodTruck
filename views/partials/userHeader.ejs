@@ -1,17 +1,13 @@
-<link
-  rel="stylesheet"
-  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css"
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css"
   integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw=="
-  crossorigin="anonymous"
-  referrerpolicy="no-referrer"
-/>
+  crossorigin="anonymous" referrerpolicy="no-referrer" />
 
 <style>
   .shared-header {
     display: flex;
     justify-content: space-around;
     width: 100%;
-    min-height: 72px;
+    height: 10vh;
     border-bottom: 1px solid rgb(224, 223, 223);
     background: #fff;
   }
@@ -93,12 +89,14 @@
       justify-content: center;
       gap: 8px;
     }
+
     .shared-header .logo,
     .shared-header .navigator,
     .shared-header .header-icons {
       width: auto;
       min-width: unset;
     }
+
     .shared-header .navigator {
       flex-wrap: wrap;
       justify-content: center;
@@ -108,7 +106,9 @@
 
 <div class="shared-header">
   <div class="logo">
-    <a href="/home"><img src="https://s3-ap-southeast-1.amazonaws.com/foodvista.1/7b92391c-fce4-44d5-84a3-1541c4b73e96.png" alt="logo" /></a>
+    <a href="/home"><img
+        src="https://s3-ap-southeast-1.amazonaws.com/foodvista.1/7b92391c-fce4-44d5-84a3-1541c4b73e96.png"
+        alt="logo" /></a>
   </div>
 
   <div class="navigator">
@@ -116,30 +116,31 @@
     <a href="/corporate">Corporate</a>
     <a href="/about">About</a>
     <a href="/blogs">Blogs</a>
-    <% if (currentUser && currentUser.role === "user") { %><a href="/orders">Orders</a><a href="/orders/bulk">Bulk Order</a><% } %>
+    <% if (currentUser && currentUser.role==="user" ) { %><a href="/orders">Orders</a><a href="/orders/bulk">Bulk
+        Order</a>
+      <% } %>
   </div>
 
   <div class="header-icons">
-    <a href="/cart" class="plain-link cart-link" title="Cart">
-      <i class="fa-solid fa-cart-shopping"></i>
-      <% if (typeof cartItemCount !== 'undefined' && cartItemCount > 0) { %>
-        <span class="cart-badge"><%= cartItemCount %></span>
-      <% } %>
-    </a>
-
     <% if (currentUser) { %>
-      <% if (currentUser.role === 'owner') { %><a href="/restaurants/dashboard" class="plain-link">Restaurant</a><% } %>
-      <form action="/auth/logout" method="POST" style="display:inline; margin:0;">
-        <button type="submit" style="border:none; background:#ef4444; color:#fff; padding:6px 10px; border-radius:6px; cursor:pointer;">Logout</button>
-      </form>
-    <% } else { %>
-      <a href="/auth/login" class="auth-link">Log In</a>
-      <a href="/auth/signup" class="auth-link">Sign Up</a>
-    <% } %>
+      <a href="/cart" class="plain-link cart-link" title="Cart">
+        <i class="fa-solid fa-cart-shopping"></i>
+        <% if (typeof cartItemCount !=='undefined' && cartItemCount> 0) { %>
+          <span class="cart-badge">
+            <%= cartItemCount %>
+          </span>
+          <% } %>
+      </a>
+
+      <% if (currentUser.role==='owner' ) { %><a href="/restaurants/dashboard" class="plain-link">Restaurant</a>
+        <% } %>
+          <form action="/auth/logout" method="POST" style="display:inline; margin:0;">
+            <button type="submit"
+              style="border:none; background:#ef4444; color:#fff; padding:6px 10px; border-radius:6px; cursor:pointer;">Logout</button>
+          </form>
+          <% } else { %>
+            <a href="/auth/login" class="auth-link">Log In</a>
+            <a href="/auth/signup" class="auth-link">Sign Up</a>
+            <% } %>
   </div>
 </div>
-
-
-
-
-

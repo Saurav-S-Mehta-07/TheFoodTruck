@@ -268,8 +268,18 @@ module.exports = {
 
   createDirectOrder: async (req, res) => {
     try {
-      const { menuItemId, quantity = 1, specialInstructions = "", customizationOption } = req.body;
-      const { paymentMethod, street, city, state, pincode, specialInstructions: orderInstructions } = req.body;
+      let { menuItemId, quantity = 1, specialInstructions = "", customizationOption } = req.body;
+
+      specialInstructions = Array.isArray(specialInstructions)
+      ? specialInstructions.join(" ")
+      : specialInstructions;
+
+      let { paymentMethod, street, city, state, pincode, specialInstructions: orderInstructions } = req.body;
+
+      orderInstructions = Array.isArray(orderInstructions)
+      ? orderInstructions.join(" ")
+      : orderInstructions;
+
       const userId = req.user._id;
 
       const menuItem = await MenuItem.findById(menuItemId).populate("restaurant", "name");

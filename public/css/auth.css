@@ -1,17 +1,25 @@
+*{
+  margin: 0;
+  padding: 0;
+}
 .auth-container {
-  min-height: 100vh;
+  height: 100vh;
   display: flex;
-  align-items: center;
-  justify-content: center;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  padding: 20px;
+  /* align-items: center; */
+  /* justify-content: center; */
+  background-image: url("https://img.magnific.com/free-photo/flat-lay-arrangement-with-salad-box-sauce_23-2148247883.jpg?semt=ais_hybrid&w=740&q=80");
+  background-repeat: no-repeat;
+  background-size: cover;
 }
 
 .auth-form {
+  margin-top: 3%;
+  margin-left: 10%;
+  height: fit-content;
   background: white;
   padding: 40px;
   border-radius: 10px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 10px 200px rgba(255, 255, 255, 0.6);
   width: 100%;
   max-width: 400px;
 }
