@@ -173,6 +173,3 @@ After seeding the database, you can create an admin user by updating a user's ro
 4. Test thoroughly
 5. Submit a pull request
 
-## License
-
-This project is licensed under the MIT License.
