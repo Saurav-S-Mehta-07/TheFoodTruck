@@ -13,8 +13,14 @@ A production-ready food delivery website built with Node.js, Express.js, MongoDB
 - **Admin Dashboard**: Manage menu items, view orders, user management
 - **Security**: Password hashing, input validation, authentication middleware
 
-![Image 1](images/image1.png)
 <img src="images/image1.png" width="300" height="200">
+<img src="images/image2.png" width="300" height="200">
+<img src="images/image3.png" width="300" height="200">
+<img src="images/image4.png" width="300" height="200">
+<img src="images/image5.png" width="300" height="200">
+<img src="images/image6.png" width="300" height="200">
+
+
 
 ![Image 2](images/image2.jpg)
 
