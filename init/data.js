@@ -51,7 +51,7 @@ const menuData = [
     price: 149,
     originalPrice: 299,
     calories: 310,
-    imageUrl: "https://s3-ap-southeast-1.amazonaws.com/foodvista.1/3e01f3e5-cc79-4a33-8ab7-3ebac3b92fb3.jpg",
+    imageUrl: "https://asset.homechef.com/uploads/meal/plated/60381/616080Smoky_Chipotle_Beef_Burrito_Bowl_ecomm-02-03-26-153012.JPG",
     tags: ["Mexican"],
     customizable: true
   },
@@ -63,7 +63,7 @@ const menuData = [
     price: 179,
     originalPrice: 329,
     calories: 280,
-    imageUrl: "https://s3-ap-southeast-1.amazonaws.com/foodvista.1/3e01f3e5-cc79-4a33-8ab7-3ebac3b92fb3.jpg",
+    imageUrl: "https://maisonmarmite.com/wp-content/uploads/2025/09/Teriyaki-Tofu-Bowl-00.jpg",
     tags: ["Asian"],
     customizable: true
   },
@@ -75,7 +75,7 @@ const menuData = [
     price: 229,
     originalPrice: 399,
     calories: 420,
-    imageUrl: "https://s3-ap-southeast-1.amazonaws.com/foodvista.1/3e01f3e5-cc79-4a33-8ab7-3ebac3b92fb3.jpg",
+    imageUrl: "https://img.taste.com.au/TrsuLfz7/taste/2017/07/grilled-chicken-and-veg-barley-bowl-126589-1.jpg",
     tags: ["Continental"],
     customizable: false
   },
@@ -87,7 +87,7 @@ const menuData = [
     price: 199,
     originalPrice: 349,
     calories: 360,
-    imageUrl: "https://s3-ap-southeast-1.amazonaws.com/foodvista.1/3e01f3e5-cc79-4a33-8ab7-3ebac3b92fb3.jpg",
+    imageUrl: "https://www.sadia-life.com/media/spflc141/16-korean-bbq-chicken-strips-web.jpg",
     tags: ["Korean"],
     customizable: false
   },
@@ -99,7 +99,7 @@ const menuData = [
     price: 159,
     originalPrice: 299,
     calories: 390,
-    imageUrl: "https://s3-ap-southeast-1.amazonaws.com/foodvista.1/3e01f3e5-cc79-4a33-8ab7-3ebac3b92fb3.jpg",
+    imageUrl: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSFo_wFWRYWIvQ2xDk_ZWeiwI7svvORfW6hjw&s",
     tags: ["Indian"],
     customizable: true
   },
@@ -111,7 +111,7 @@ const menuData = [
     price: 189,
     originalPrice: 329,
     calories: 450,
-    imageUrl: "https://s3-ap-southeast-1.amazonaws.com/foodvista.1/3e01f3e5-cc79-4a33-8ab7-3ebac3b92fb3.jpg",
+    imageUrl: "https://www.allrecipes.com/thmb/ziUOvj4f_me5yvZhYCUy0n4IKbQ=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/276725-creamy-chicken-alfredo-VAT-001-Beauty-4x3-c4b026db5cb349f4b8fd627c56f91a42.jpg",
     tags: ["Italian"],
     customizable: true
   },
@@ -123,7 +123,7 @@ const menuData = [
     price: 129,
     originalPrice: 249,
     calories: 180,
-    imageUrl: "https://s3-ap-southeast-1.amazonaws.com/foodvista.1/3e01f3e5-cc79-4a33-8ab7-3ebac3b92fb3.jpg",
+    imageUrl: "https://www.chelseasmessyapron.com/wp-content/uploads/2022/01/GARDEN-SALAD-CHELSEASMESSYAPRON-1200-2.jpg",
     tags: ["Healthy"],
     customizable: false
   },
@@ -135,7 +135,7 @@ const menuData = [
     price: 99,
     originalPrice: 199,
     calories: 320,
-    imageUrl: "https://s3-ap-southeast-1.amazonaws.com/foodvista.1/3e01f3e5-cc79-4a33-8ab7-3ebac3b92fb3.jpg",
+    imageUrl: "https://www.biggerbolderbaking.com/wp-content/uploads/2023/02/Microwave-Lava-Cake-bowl-Thumbnail-scaled.jpg",
     tags: ["Sweet"],
     customizable: false
   }

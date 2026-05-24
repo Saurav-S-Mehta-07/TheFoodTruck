@@ -290,6 +290,7 @@
     background: #667eea;
     color: white;
     text-decoration: none;
+    border: none;
     border-radius: 5px;
     font-size: 0.9rem;
     transition: background 0.3s;
@@ -842,3 +843,10 @@
     text-decoration: none;
 }
 
+.item-title{
+    color:black;
+}
+
+.item-show{
+    text-decoration: none;
+}

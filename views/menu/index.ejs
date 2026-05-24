@@ -59,13 +59,14 @@
         <% } else { %>
           <div class="menu-grid">
             <% menuItems.forEach(item => { %>
+              <a href="/menu/<%= item._id %>" class="item-show">
               <div class="menu-item">
                 <div class="item-image">
                   <% if (item.imageUrl) { %><img src="<%= item.imageUrl %>" alt="<%= item.title %>"><% } else { %><div class="no-image">No Image</div><% } %>
                   <% if (item.foodType === 'veg') { %><span class="veg-indicator">Veg</span><% } else { %><span class="non-veg-indicator">Non-Veg</span><% } %>
                 </div>
                 <div class="item-content">
-                  <h3><a href="/menu/<%= item._id %>"><%= item.title %></a></h3>
+                  <h3 class="item-title"><%= item.title %></h3>
                   <p><%= item.description %></p>
                   <div class="item-meta">
                     <% if (item.calories) { %><span><%= item.calories %> cal</span><% } %>
@@ -79,7 +80,7 @@
                     <form action="/cart/add" method="POST" class="add-to-cart-form">
                         <input type="hidden" name="menuItemId" value="<%= item._id %>">
                         <input type="hidden" name="quantity" value="1">
-                        <select name="customizationOption" style="margin: 0 6px;">
+                        <select name="customizationOption" style="margin: 0 6px; border: 0.5px solid black; border-radius: 5px;">
                           <option value="Default" selected>Default</option>
                           <option value="Less Spicy">Less Spicy</option>
                           <option value="Extra Spicy">Extra Spicy</option>
@@ -91,6 +92,7 @@
                   </div>
                 </div>
               </div>
+              </a>
             <% }); %>
           </div>
         <% } %>
