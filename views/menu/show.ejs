@@ -21,12 +21,13 @@
             <div class="item-detail">
               <div class="item-image-large">
                 <% if (menuItem.imageUrl) { %><img src="<%= menuItem.imageUrl %>" alt="<%= menuItem.title %>">
-                  <% } else { %>
+                <% } 
+                else { %>
                     <div class="no-image">No Image</div>
-                    <% } %>
+                <% } %>
                       <% if (menuItem.foodType==='veg' ) { %><span class="veg-indicator">Veg</span>
                         <% } else { %><span class="non-veg-indicator">Non-Veg</span>
-                          <% } %>
+                      <% } %>
               </div>
 
               <div class="item-info">
@@ -62,8 +63,11 @@
               <% if (menuItem.originalPrice && menuItem.originalPrice > menuItem.price) { %><span class="original-price">Rs <%= menuItem.originalPrice %></span><% } %>
             </div>
 
+            <hr>
+
             <% if (currentUser) { %>
-              <form action="/orders/direct" method="POST" class="add-to-cart-form" style="margin-top: 16px;">
+              <h2 style="text-align: center;">Direct Order</h2>
+              <form action="/orders/direct" method="POST" class="add-to-cart-form show-page-order" style="margin-top: 16px;">
                 <input type="hidden" name="menuItemId" value="<%= menuItem._id %>">
                 <div class="quantity-selector">
                   <label for="orderQuantity">Quantity:</label>
@@ -195,26 +199,28 @@
                   <h2>Related Items</h2>
                   <div class="menu-grid">
                     <% relatedItems.forEach(item=> { %>
-                      <div class="menu-item">
-                        <div class="item-image">
-                          <% if (item.imageUrl) { %><img src="<%= item.imageUrl %>" alt="<%= item.title %>">
-                            <% } else { %>
-                              <div class="no-image">No Image</div>
-                              <% } %>
-                        </div>
-                        <div class="item-content">
-                          <h3><a href="/menu/<%= item._id %>">
-                              <%= item.title %>
-                            </a></h3>
-                          <p>
-                            <%= item.description %>
-                          </p>
-                          <div class="item-footer">
-                            <span class="price">Rs <%= item.price %></span>
-                            <a href="/menu/<%= item._id %>" class="add-to-cart-btn">View</a>
+                      <a href="/menu/<%= item._id %>" style="text-decoration: none;">
+                        <div class="menu-item">
+                          <div class="item-image">
+                            <% if (item.imageUrl) { %><img src="<%= item.imageUrl %>" alt="<%= item.title %>">
+                              <% } else { %>
+                                <div class="no-image">No Image</div>
+                                <% } %>
+                          </div>
+                          <div class="item-content">
+                            <h3>
+                                <%= item.title %>
+                            </h3>
+                            <p>
+                              <%= item.description %>
+                            </p>
+                            <div class="item-footer">
+                              <span class="price">Rs <%= item.price %></span>
+                              <a href="/menu/<%= item._id %>" class="add-to-cart-btn">View</a>
+                            </div>
                           </div>
                         </div>
-                      </div>
+                      </a>
                       <% }); %>
                   </div>
                 </div>
